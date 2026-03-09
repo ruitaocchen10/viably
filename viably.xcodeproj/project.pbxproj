@@ -6,13 +6,30 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2687C9522F5F32810094D0E3 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 2687C9172F5F2FC80094D0E3 /* Supabase */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		26BCF6C42F5F0E6500257D52 /* viably.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = viably.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2687C96A2F5F34160094D0E3 /* Exceptions for "viably" folder in "viably" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 26BCF6C32F5F0E6500257D52 /* viably */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		26BCF6C62F5F0E6500257D52 /* viably */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2687C96A2F5F34160094D0E3 /* Exceptions for "viably" folder in "viably" target */,
+			);
 			path = viably;
 			sourceTree = "<group>";
 		};
@@ -23,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2687C9522F5F32810094D0E3 /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +83,7 @@
 			);
 			name = viably;
 			packageProductDependencies = (
+				2687C9172F5F2FC80094D0E3 /* Supabase */,
 			);
 			productName = viably;
 			productReference = 26BCF6C42F5F0E6500257D52 /* viably.app */;
@@ -94,6 +113,9 @@
 			);
 			mainGroup = 26BCF6BB2F5F0E6500257D52;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2687C9162F5F2FC80094D0E3 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 26BCF6C52F5F0E6500257D52 /* Products */;
 			projectDirPath = "";
@@ -256,6 +278,7 @@
 				DEVELOPMENT_TEAM = NS8CC9Z25V;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = viably/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -288,6 +311,7 @@
 				DEVELOPMENT_TEAM = NS8CC9Z25V;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = viably/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -332,6 +356,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2687C9162F5F2FC80094D0E3 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2687C9172F5F2FC80094D0E3 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2687C9162F5F2FC80094D0E3 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 26BCF6BC2F5F0E6500257D52 /* Project object */;
 }
