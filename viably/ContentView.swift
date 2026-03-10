@@ -8,17 +8,35 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var authVM: AuthViewModel
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            HomeView()
+                .tabItem {
+                    Label("Home", systemImage: "house.fill")
+                }
+
+            SocialFeedView()
+                .tabItem {
+                    Label("Feed", systemImage: "flame.fill")
+                }
+
+            CreationView()
+                .tabItem {
+                    Label("Create", systemImage: "plus.circle.fill")
+                }
+
+            ProfileView()
+                .tabItem {
+                    Label("Profile", systemImage: "person.fill")
+                }
         }
-        .padding()
+        .tint(.dsAccentLime)
     }
 }
 
 #Preview {
     ContentView()
+        .environmentObject(AuthViewModel())
 }

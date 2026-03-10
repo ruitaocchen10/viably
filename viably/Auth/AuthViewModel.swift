@@ -14,20 +14,15 @@ class AuthViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
+    private static let callbackURL = "com.ruitaochen.viably://auth/callback"
+    private var authListenerTask: Task<Void, Never>?
+
     init() {
-        Task {
-            await checkSession()
-            await listenToAuthChanges()
-        }
+        authListenerTask = Task { await listenToAuthChanges() }
     }
 
-    private func checkSession() async {
-        do {
-            _ = try await supabase.auth.session
-            isAuthenticated = true
-        } catch {
-            isAuthenticated = false
-        }
+    deinit {
+        authListenerTask?.cancel()
     }
 
     private func listenToAuthChanges() async {
@@ -54,7 +49,7 @@ class AuthViewModel: ObservableObject {
             let context = WebAuthContext()
             try await supabase.auth.signInWithOAuth(
                 provider: provider,
-                redirectTo: URL(string: "com.ruitaochen.viably://auth/callback")
+                redirectTo: URL(string: Self.callbackURL)
             ) { url in
                 try await context.authenticate(url: url)
             }
@@ -65,11 +60,13 @@ class AuthViewModel: ObservableObject {
     }
 
     func signOut() async {
+        isLoading = true
         do {
             try await supabase.auth.signOut()
         } catch {
             errorMessage = error.localizedDescription
         }
+        isLoading = false
     }
 }
 
