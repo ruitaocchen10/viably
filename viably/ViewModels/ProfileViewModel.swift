@@ -13,8 +13,8 @@ final class ProfileViewModel: ObservableObject {
 
     private let userID: UUID
 
-    init(userID: UUID) {
-        self.userID = userID
+    init() {
+        self.userID = supabase.auth.currentUser?.id ?? UUID()
         Task { await loadProfile() }
     }
 

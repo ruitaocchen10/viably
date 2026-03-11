@@ -6,7 +6,7 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @ObservedObject var viewModel: ProfileViewModel
+    @StateObject private var viewModel = ProfileViewModel()
 
     var body: some View {
         ScrollView {
@@ -120,13 +120,5 @@ struct ProfileView: View {
 // MARK: - Preview
 
 #Preview {
-    let vm = ProfileViewModel(userID: UUID())
-    vm.profile = Profile(
-        id: UUID(),
-        username: "ruitao",
-        displayName: "Ruitao",
-        avatarURL: nil,
-        createdAt: Date()
-    )
-    return ProfileView(viewModel: vm)
+    ProfileView()
 }
