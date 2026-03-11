@@ -66,7 +66,7 @@ private struct AuthButton: View {
                 Image(systemName: icon)
                     .font(.system(size: 18, weight: .medium))
                 Text(label)
-                    .font(.dsSectionLabel)
+                    .font(.dsSemiBoldSectionLabel)
             }
             .foregroundColor(.dsTextPrimary)
             .frame(maxWidth: .infinity)

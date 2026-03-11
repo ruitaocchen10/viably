@@ -17,7 +17,7 @@ struct SocialFeedView: View {
                     .font(.dsHeading)
                     .foregroundColor(.dsTextPrimary)
                 Text("Coming Soon")
-                    .font(.dsSectionLabel)
+                    .font(.dsSemiBoldSectionLabel)
                     .foregroundColor(.dsTextMuted)
             }
         }

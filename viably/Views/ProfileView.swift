@@ -94,7 +94,7 @@ struct ProfileView: View {
                 .font(.dsHeading)
                 .foregroundColor(.dsTextPrimary)
             Text("@\(viewModel.profile?.username ?? "")")
-                .font(.dsSectionLabel)
+                .font(.dsSemiBoldSectionLabel)
                 .foregroundColor(.dsTextMuted)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

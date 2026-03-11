@@ -17,6 +17,15 @@ final class HomeViewModel: ObservableObject {
         guard maxScoreValue > 0 else { return 0 }
         return Double(scoreValue) / Double(maxScoreValue)
     }
+    var mvdHabitsRemaining: Int {
+        habits.filter { $0.isMVD && !completedHabitIDs.contains($0.id) }.count
+    }
+    var userName: String {
+        if case .string(let name) = supabase.auth.currentUser?.userMetadata["full_name"] {
+            return name.components(separatedBy: " ").first ?? name
+        }
+        return "there"
+    }
 
     private let userID: UUID
 
