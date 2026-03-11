@@ -7,6 +7,8 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
+    @StateObject private var profileVM = ProfileViewModel()
+    @State private var showProfile = false
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: .now)
@@ -36,9 +38,25 @@ struct HomeView: View {
                                 .font(.dsXBoldTitle)
                                 .foregroundColor(.dsTextPrimary)
                             Spacer()
-                            Circle()
-                                .fill(Color.dsSurface)
+                            Button { showProfile = true } label: {
+                                Group {
+                                    if let urlString = profileVM.profile?.avatarURL,
+                                       let url = URL(string: urlString) {
+                                        AsyncImage(url: url) { image in
+                                            image.resizable().scaledToFill()
+                                        } placeholder: {
+                                            Color.dsSurface
+                                        }
+                                    } else {
+                                        Color.dsSurface
+                                    }
+                                }
                                 .frame(width: 44, height: 44)
+                                .clipShape(Circle())
+                            }
+                            .sheet(isPresented: $showProfile) {
+                                ProfileView()
+                            }
                         }
 
                         WeekCalendarView()
