@@ -36,7 +36,7 @@ struct ProfileView: View {
     // MARK: - Header
 
     private var header: some View {
-        ZStack(alignment: .bottom) {
+        ZStack(alignment: .bottomLeading) {
             LinearGradient(
                 colors: [Color.dsAccentPurple, Color(hex: "#3a4a2a")],
                 startPoint: .topLeading,
@@ -45,14 +45,11 @@ struct ProfileView: View {
             .frame(height: 180)
             .frame(maxWidth: .infinity)
 
-            VStack(spacing: 6) {
-                avatar
-                    .offset(y: 40)
-
-                Spacer().frame(height: 40)
-            }
+            avatar
+                .offset(y: 40)
+                .padding(.leading, 16)
         }
-        .padding(.bottom, 48)
+        .padding(.bottom, 24)
     }
 
     // MARK: - Avatar
@@ -92,7 +89,7 @@ struct ProfileView: View {
     // MARK: - Profile info
 
     private var profileInfo: some View {
-        VStack(spacing: 4) {
+        VStack(alignment: .leading, spacing: 4) {
             Text(viewModel.profile?.displayName ?? viewModel.profile?.username ?? "—")
                 .font(.dsHeading)
                 .foregroundColor(.dsTextPrimary)
@@ -100,6 +97,7 @@ struct ProfileView: View {
                 .font(.dsCaption)
                 .foregroundColor(.dsTextMuted)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: - Stats row
