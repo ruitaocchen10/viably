@@ -6,4 +6,12 @@ struct Profile: Codable, Identifiable {
     let displayName: String?
     let avatarURL: String?
     let createdAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case username
+        case displayName = "display_name"
+        case avatarURL = "avatar_url"
+        case createdAt = "created_at"
+    }
 }
