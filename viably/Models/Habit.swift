@@ -5,13 +5,14 @@ struct Habit: Codable, Identifiable {
     let userID: UUID
     var name: String
     var icon: String?
+    var description: String?
     var isMVD: Bool
     var isActive: Bool
     var currentStreak: Int
     let createdAt: Date
 
     enum CodingKeys: String, CodingKey {
-        case id, name, icon
+        case id, name, icon, description
         case userID = "user_id"
         case isMVD = "is_mvd"
         case isActive = "is_active"

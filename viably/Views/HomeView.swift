@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct HomeView: View {
+    @Binding var selectedTab: Int
     @StateObject private var viewModel = HomeViewModel()
     @StateObject private var profileVM = ProfileViewModel()
     @State private var showProfile = false
@@ -76,11 +77,29 @@ struct HomeView: View {
                                 .foregroundColor(.dsTextPrimary)
 
                             if viewModel.habits.isEmpty {
-                                Text("No habits yet. Create your first habit!")
-                                    .font(.dsCaption)
-                                    .foregroundColor(.dsTextMuted)
-                                    .frame(maxWidth: .infinity, alignment: .center)
-                                    .padding(.vertical, 24)
+                                VStack(spacing: 16) {
+                                    Image(systemName: "checkmark.circle.dashed")
+                                        .font(.system(size: 48))
+                                        .foregroundColor(.dsAccentLime)
+                                    Text("Start building streaks")
+                                        .font(.dsXBoldHeading)
+                                        .foregroundColor(.dsTextPrimary)
+                                    Text("Add your first habit and start tracking your progress.")
+                                        .font(.dsCaption)
+                                        .foregroundColor(.dsTextMuted)
+                                        .multilineTextAlignment(.center)
+                                    Button("Add your first habit") {
+                                        selectedTab = 2
+                                    }
+                                    .font(.dsSemiBoldSectionLabel)
+                                    .foregroundColor(.dsBackground)
+                                    .padding(.horizontal, 24)
+                                    .padding(.vertical, 12)
+                                    .background(Color.dsAccentLime)
+                                    .cornerRadius(12)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 24)
                             } else {
                                 ForEach(viewModel.habits) { habit in
                                     HabitRow(
@@ -113,5 +132,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    HomeView(selectedTab: .constant(0))
 }
