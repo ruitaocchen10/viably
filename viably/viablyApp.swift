@@ -15,7 +15,9 @@ struct viablyApp: App {
     var body: some Scene {
         WindowGroup {
             Group {
-                if authVM.isAuthenticated {
+                if authVM.isCheckingSession {
+                    Color.clear
+                } else if authVM.isAuthenticated {
                     ContentView()
                         .environmentObject(authVM)
                 } else {

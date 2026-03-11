@@ -1,7 +1,6 @@
 //
 //  AuthViewModel.swift
 //  viably
-//
 
 import AuthenticationServices
 import Combine
@@ -12,6 +11,7 @@ import Supabase
 class AuthViewModel: ObservableObject {
     @Published var isAuthenticated = false
     @Published var isLoading = false
+    @Published var isCheckingSession = true
     @Published var errorMessage: String?
 
     private static let callbackURL = "com.ruitaochen.viably://auth/callback"
@@ -26,9 +26,10 @@ class AuthViewModel: ObservableObject {
     }
 
     private func listenToAuthChanges() async {
-        for await (event, session) in await supabase.auth.authStateChanges {
+        for await (event, session) in await AuthService.authStateChanges() {
+            isCheckingSession = false
             switch event {
-            case .signedIn:
+            case .initialSession, .signedIn:
                 isAuthenticated = session != nil
             case .signedOut, .userDeleted:
                 isAuthenticated = false
@@ -39,20 +40,14 @@ class AuthViewModel: ObservableObject {
     }
 
     func signInWithGoogle() async {
-        await signIn(provider: .google)
-    }
-
-    private func signIn(provider: Provider) async {
         isLoading = true
         errorMessage = nil
         do {
             let context = WebAuthContext()
-            try await supabase.auth.signInWithOAuth(
-                provider: provider,
-                redirectTo: URL(string: Self.callbackURL)
-            ) { url in
-                try await context.authenticate(url: url)
-            }
+            try await AuthService.signIn(
+                provider: .google,
+                redirectTo: URL(string: Self.callbackURL)!
+            ) { url in try await context.authenticate(url: url) }
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -62,7 +57,7 @@ class AuthViewModel: ObservableObject {
     func signOut() async {
         isLoading = true
         do {
-            try await supabase.auth.signOut()
+            try await AuthService.signOut()
         } catch {
             errorMessage = error.localizedDescription
         }
