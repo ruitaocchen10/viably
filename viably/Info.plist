@@ -9,6 +9,7 @@
 		<string>Syne-Medium.ttf</string>
 		<string>Syne-SemiBold.ttf</string>
 		<string>Syne-ExtraBold.ttf</string>
+		<string>Syne-Bold.ttf</string>
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
