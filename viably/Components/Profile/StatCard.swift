@@ -18,5 +18,9 @@ struct StatCard: View {
         .padding(.vertical, 16)
         .background(Color.dsSurface)
         .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.dsBorder, lineWidth: 1)
+        )
     }
 }

@@ -8,6 +8,7 @@ import SwiftUI
 extension Color {
     static let dsBackground   = Color(hex: "#13131a")
     static let dsSurface      = Color(hex: "#1c1c28")
+    static let dsBorder       = Color.white.opacity(0.07)
     static let dsAccentLime   = Color(hex: "#c8ff57")
     static let dsAccentPurple = Color(hex: "#7c6aff")
     static let dsAccentYellow = Color(hex: "#ffdb57")
