@@ -91,7 +91,7 @@ struct ProfileView: View {
     private var profileInfo: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(viewModel.profile?.displayName ?? viewModel.profile?.username ?? "—")
-                .font(.dsHeading)
+                .font(.dsXBoldHeading)
                 .foregroundColor(.dsTextPrimary)
             Text("@\(viewModel.profile?.username ?? "")")
                 .font(.dsSemiBoldSectionLabel)

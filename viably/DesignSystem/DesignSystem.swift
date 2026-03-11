@@ -40,13 +40,14 @@ extension Color {
 }
 
 extension Font {
-    static let dsHeading = Font.custom("Syne-ExtraBold", size: 32)
-    static let dsTitle = Font.custom("Syne-ExtraBold", size: 24)
+    static let dsXBoldHeading = Font.custom("Syne-ExtraBold", size: 32)
+    static let dsXBoldTitle = Font.custom("Syne-ExtraBold", size: 24)
+
+    static let dsBoldSubtitle = Font.custom("Syne-Bold", size: 20)
+    static let dsBoldSectionLabel = Font.custom("Syne-Bold", size: 16)
 
     static let dsSemiBoldSectionLabel = Font.custom("Syne-SemiBold", size: 16)
     static let dsSemiBoldCaption = Font.custom("Syne-SemiBold", size: 12)
-
-    static let dsBoldSectionLabel = Font.custom("Syne-Bold", size: 16)
 
     static let dsCaption = Font.custom("Syne-Medium", size: 12)
 }

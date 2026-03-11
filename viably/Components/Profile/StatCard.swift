@@ -8,7 +8,7 @@ struct StatCard: View {
     var body: some View {
         VStack(spacing: 4) {
             Text("\(value)")
-                .font(.dsHeading)
+                .font(.dsXBoldHeading)
                 .foregroundColor(color)
             Text(label)
                 .font(.dsCaption)

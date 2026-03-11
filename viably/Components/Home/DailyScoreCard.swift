@@ -15,7 +15,7 @@ struct DailyScoreCard: View {
                     .foregroundColor(.dsTextMuted)
                 Spacer()
                 Text("\(score)/\(maxScore)")
-                    .font(.dsHeading)
+                    .font(.dsXBoldHeading)
                     .foregroundColor(.dsAccentLime)
             }
 

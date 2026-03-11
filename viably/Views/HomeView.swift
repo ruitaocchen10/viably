@@ -33,7 +33,7 @@ struct HomeView: View {
                         // Header
                         HStack(alignment: .top) {
                             Text(greeting)
-                                .font(.dsTitle)
+                                .font(.dsXBoldTitle)
                                 .foregroundColor(.dsTextPrimary)
                             Spacer()
                             Circle()
@@ -54,7 +54,7 @@ struct HomeView: View {
                         // Habits section
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Your Habits")
-                                .font(.dsTitle)
+                                .font(.dsXBoldTitle)
                                 .foregroundColor(.dsTextPrimary)
 
                             if viewModel.habits.isEmpty {

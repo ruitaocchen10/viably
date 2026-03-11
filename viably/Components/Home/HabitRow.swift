@@ -33,7 +33,7 @@ struct HabitRow: View {
 
             // Streak number
             Text("\(habit.currentStreak)")
-                .font(.dsHeading)
+                .font(.dsXBoldHeading)
                 .foregroundColor(.dsAccentYellow)
         }
         .padding(12)
