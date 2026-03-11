@@ -89,7 +89,7 @@ struct ProfileView: View {
     // MARK: - Profile info
 
     private var profileInfo: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(viewModel.profile?.displayName ?? viewModel.profile?.username ?? "—")
                 .font(.dsHeading)
                 .foregroundColor(.dsTextPrimary)
