@@ -11,6 +11,7 @@ extension Color {
     static let dsAccentLime   = Color(hex: "#c8ff57")
     static let dsAccentPurple = Color(hex: "#7c6aff")
     static let dsAccentYellow = Color(hex: "#ffdb57")
+    static let dsAccentOrange = Color(hex: "#ff6b2b")
     static let dsTextPrimary  = Color(hex: "#ffffff")
     static let dsTextMuted    = Color(hex: "#6b6880")
 
