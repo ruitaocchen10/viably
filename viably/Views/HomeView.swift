@@ -54,7 +54,7 @@ struct HomeView: View {
                         // Habits section
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Your Habits")
-                                .font(.dsXBoldTitle)
+                                .font(.dsXBoldSubtitle)
                                 .foregroundColor(.dsTextPrimary)
 
                             if viewModel.habits.isEmpty {

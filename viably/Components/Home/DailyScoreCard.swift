@@ -11,7 +11,7 @@ struct DailyScoreCard: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top) {
                 Text("Daily Score")
-                    .font(.dsCaption)
+                    .font(.dsSemiBoldLabel)
                     .foregroundColor(.dsTextMuted)
                 Spacer()
                 Text("\(score)/\(maxScore)")
