@@ -56,7 +56,7 @@ private struct DayCell: View {
                 .font(.dsCaption)
                 .foregroundColor(isToday ? .dsAccentLime : .dsTextMuted)
             Text(dayNumber)
-                .font(isToday ? .dsBoldTitle : .dsBoldSectionLabel)
+                .font(isToday ? .dsBoldSubtitle : .dsBoldSectionLabel)
                 .foregroundColor(.dsTextPrimary)
         }
         .frame(maxWidth: .infinity)
