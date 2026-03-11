@@ -1,4 +1,5 @@
 import Foundation
+import Supabase
 
 struct ProfileService {
     static func fetch(id: UUID) async throws -> Profile {
