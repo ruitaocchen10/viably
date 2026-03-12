@@ -5,7 +5,7 @@ DerivedData/
 *.xccheckout
 
 # Secrets — never commit real keys
-viably/Secrets/Secrets.swift
+viably/Secrets
 
 # macOS
 .DS_Store

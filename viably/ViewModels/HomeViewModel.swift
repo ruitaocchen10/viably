@@ -50,12 +50,20 @@ final class HomeViewModel: ObservableObject {
             todayScore = fetchedScore
 
             let (computedScore, computedMax, computedViable) = recalculateScore()
-            todayScore = try await DailyScoreService.upsertToday(
+            try await DailyScoreService.upsertToday(
                 userID: userID,
                 score: computedScore,
                 maxScore: computedMax,
                 isViableDay: computedViable
             )
+            if var s = fetchedScore {
+                s.score = computedScore
+                s.maxScore = computedMax
+                s.isViableDay = computedViable
+                todayScore = s
+            } else {
+                todayScore = try await DailyScoreService.fetchToday(for: userID)
+            }
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -76,7 +84,7 @@ final class HomeViewModel: ObservableObject {
             if isCurrentlyCompleted {
                 try await HabitCompletionService.uncomplete(habitID: habit.id, on: .now)
             } else {
-                _ = try await HabitCompletionService.complete(habitID: habit.id, userID: userID, on: .now)
+                try await HabitCompletionService.complete(habitID: habit.id, userID: userID, on: .now)
             }
 
             // 3. Compute and persist streak
@@ -90,12 +98,15 @@ final class HomeViewModel: ObservableObject {
 
             // 5. Recalculate and persist daily score
             let (newScore, newMax, newIsViable) = recalculateScore()
-            todayScore = try await DailyScoreService.upsertToday(
+            try await DailyScoreService.upsertToday(
                 userID: userID,
                 score: newScore,
                 maxScore: newMax,
                 isViableDay: newIsViable
             )
+            todayScore?.score = newScore
+            todayScore?.maxScore = newMax
+            todayScore?.isViableDay = newIsViable
         } catch {
             // 6. Roll back optimistic update
             if isCurrentlyCompleted {

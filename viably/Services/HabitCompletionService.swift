@@ -23,18 +23,16 @@ struct HabitCompletionService {
         return results.first
     }
 
-    static func complete(habitID: UUID, userID: UUID, on date: Date) async throws -> HabitCompletion {
+    static func complete(habitID: UUID, userID: UUID, on date: Date) async throws {
         let payload: [String: AnyJSON] = [
             "habit_id": .string(habitID.uuidString),
             "user_id": .string(userID.uuidString),
             "completed_date": .string(isoDateString(from: date))
         ]
-        return try await supabase
+        try await supabase
             .from("habit_completions")
             .insert(payload)
-            .single()
             .execute()
-            .value
     }
 
     static func uncomplete(habitID: UUID, on date: Date) async throws {

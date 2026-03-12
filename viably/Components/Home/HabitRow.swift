@@ -42,9 +42,13 @@ struct HabitRow: View {
             Spacer()
 
             // Streak number
-            Text("\(habit.currentStreak)")
-                .font(.dsXBoldHeading)
-                .foregroundColor(.dsAccentYellow)
+            HStack(spacing: 4) {
+                Text("🔥")
+                    .font(.system(size: 18))
+                Text("\(habit.currentStreak)")
+                    .font(.dsXBoldHeading)
+                    .foregroundColor(.dsAccentYellow)
+            }
         }
         .padding(12)
         .background(
