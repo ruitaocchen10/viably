@@ -1,12 +1,55 @@
 import SwiftUI
 import UIKit
 
+struct LiquidBlobShape: Shape {
+    var progress: CGFloat
+    let fromLeft: Bool
+    private let maxBulge: CGFloat = 20
+
+    var animatableData: CGFloat {
+        get { progress }
+        set { progress = newValue }
+    }
+
+    func path(in rect: CGRect) -> Path {
+        let w = (rect.width / 2) * progress
+        let bulge = maxBulge * sin(progress * .pi)
+        var path = Path()
+        if fromLeft {
+            let x = rect.minX + w
+            path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+            path.addLine(to: CGPoint(x: x, y: rect.minY))
+            path.addCurve(
+                to: CGPoint(x: x, y: rect.maxY),
+                control1: CGPoint(x: x + bulge, y: rect.minY + rect.height * 0.35),
+                control2: CGPoint(x: x + bulge, y: rect.maxY - rect.height * 0.35)
+            )
+            path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        } else {
+            let x = rect.maxX - w
+            path.move(to: CGPoint(x: rect.maxX, y: rect.minY))
+            path.addLine(to: CGPoint(x: x, y: rect.minY))
+            path.addCurve(
+                to: CGPoint(x: x, y: rect.maxY),
+                control1: CGPoint(x: x - bulge, y: rect.minY + rect.height * 0.35),
+                control2: CGPoint(x: x - bulge, y: rect.maxY - rect.height * 0.35)
+            )
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        }
+        path.closeSubpath()
+        return path
+    }
+}
+
 struct HabitRow: View {
     let habit: Habit
     let isCompleted: Bool
     let onTap: () -> Void
 
     @State private var pressProgress: CGFloat = 0.0
+    @State private var completionFlash: CGFloat = 0.0
+    @State private var completionScale: CGFloat = 1.0
+    @State private var streakBump: CGFloat = 1.0
 
     var body: some View {
         HStack(spacing: 12) {
@@ -49,16 +92,17 @@ struct HabitRow: View {
                     .font(.dsXBoldHeading)
                     .foregroundColor(.dsAccentYellow)
             }
+            .scaleEffect(streakBump)
         }
         .padding(12)
         .background(
-            ZStack(alignment: .leading) {
+            ZStack {
                 isCompleted ? Color(hex: "#162316") : Color.dsSurface
-                GeometryReader { geo in
-                    Rectangle()
-                        .fill(Color.dsAccentLime.opacity(0.25))
-                        .frame(width: geo.size.width * pressProgress)
-                }
+                LiquidBlobShape(progress: pressProgress, fromLeft: true)
+                    .fill(Color.dsAccentLime.opacity(1.0))
+                LiquidBlobShape(progress: pressProgress, fromLeft: false)
+                    .fill(Color.dsAccentLime.opacity(1.0))
+                Color.dsAccentLime.opacity(completionFlash)
             }
         )
         .cornerRadius(16)
@@ -66,17 +110,44 @@ struct HabitRow: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.white.opacity(0.08), lineWidth: 1)
         )
-        .onLongPressGesture(minimumDuration: 0.6, pressing: { isPressing in
+        .scaleEffect(completionScale)
+        .onLongPressGesture(minimumDuration: 1.0, pressing: { isPressing in
             guard !isCompleted else { return }
-            withAnimation(isPressing ? .linear(duration: 0.6) : .spring(duration: 0.2)) {
+            withAnimation(isPressing ? .linear(duration: 0.82) : .spring(duration: 0.2)) {
                 pressProgress = isPressing ? 1.0 : 0.0
             }
         }, perform: {
             guard !isCompleted else { return }
-            let haptic = UIImpactFeedbackGenerator(style: .medium)
-            haptic.impactOccurred()
-            pressProgress = 0.0
             onTap()
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+
+            // Snap blobs to fully converged, counteracting the spring-back from pressing=false
+            withAnimation(.linear(duration: 0.05)) { pressProgress = 1.0 }
+
+            // Flash in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                withAnimation(.easeIn(duration: 0.12)) { completionFlash = 0.45 }
+            }
+
+            // Flash out + fade blobs + bounces
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.17) {
+                withAnimation(.easeOut(duration: 0.28)) {
+                    completionFlash = 0.0
+                    pressProgress = 0.0
+                }
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                    completionScale = 1.03
+                    streakBump = 1.3
+                }
+            }
+
+            // Return to rest
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.38) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                    completionScale = 1.0
+                    streakBump = 1.0
+                }
+            }
         })
     }
 }

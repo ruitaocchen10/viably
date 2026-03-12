@@ -46,20 +46,24 @@ struct HabitLibraryRow: View {
             }
 
             // Action buttons
-            HStack(spacing: 4) {
+            HStack(spacing: 8) {
                 Button(action: onEdit) {
                     Image(systemName: "pencil")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.system(size: 20, weight: .medium))
                         .foregroundColor(.dsTextMuted)
-                        .frame(width: 32, height: 32)
+                        .frame(width: 40, height: 40)
+                        .background(Color.dsBackground)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .buttonStyle(.plain)
 
                 Button(action: onDelete) {
                     Image(systemName: "trash")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.dsTextMuted)
-                        .frame(width: 32, height: 32)
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundColor(.red)
+                        .frame(width: 40, height: 40)
+                        .background(Color.red.opacity(0.12))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .buttonStyle(.plain)
             }
