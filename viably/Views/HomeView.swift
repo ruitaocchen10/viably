@@ -9,7 +9,6 @@ struct HomeView: View {
     @Binding var selectedTab: Int
     @StateObject private var viewModel = HomeViewModel()
     @StateObject private var profileVM = ProfileViewModel()
-    @State private var showProfile = false
     @AppStorage("hasSeenHoldCoachMark") private var hasSeenCoachMark = false
 
     private var greeting: String {
@@ -40,7 +39,7 @@ struct HomeView: View {
                                 .font(.dsXBoldTitle)
                                 .foregroundColor(.dsTextPrimary)
                             Spacer()
-                            Button { showProfile = true } label: {
+                            Button { selectedTab = 3 } label: {
                                 Group {
                                     if let urlString = profileVM.profile?.avatarURL,
                                        let url = URL(string: urlString) {
@@ -55,9 +54,6 @@ struct HomeView: View {
                                 }
                                 .frame(width: 44, height: 44)
                                 .clipShape(Circle())
-                            }
-                            .sheet(isPresented: $showProfile) {
-                                ProfileView()
                             }
                         }
 

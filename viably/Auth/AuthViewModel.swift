@@ -43,10 +43,13 @@ class AuthViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         do {
+            guard let callbackURL = URL(string: Self.callbackURL) else {
+                preconditionFailure("Invalid callback URL: \(Self.callbackURL)")
+            }
             let context = WebAuthContext()
             try await AuthService.signIn(
                 provider: .google,
-                redirectTo: URL(string: Self.callbackURL)!
+                redirectTo: callbackURL
             ) { url in try await context.authenticate(url: url) }
         } catch {
             errorMessage = error.localizedDescription

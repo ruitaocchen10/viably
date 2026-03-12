@@ -4,9 +4,9 @@ struct DailyScore: Codable, Identifiable {
     let id: UUID
     let userID: UUID
     let scoreDate: Date
-    var score: Int
-    var maxScore: Int
-    var isViableDay: Bool
+    let score: Int
+    let maxScore: Int
+    let isViableDay: Bool
     let createdAt: Date
 
     enum CodingKeys: String, CodingKey {

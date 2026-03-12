@@ -62,11 +62,16 @@ struct HabitService {
             let name: String
             let icon: String?
             let description: String?
-            let is_mvd: Bool
+            let isMVD: Bool
+
+            enum CodingKeys: String, CodingKey {
+                case name, icon, description
+                case isMVD = "is_mvd"
+            }
         }
         return try await supabase
             .from("habits")
-            .update(Payload(name: name, icon: icon, description: description, is_mvd: isMVD))
+            .update(Payload(name: name, icon: icon, description: description, isMVD: isMVD))
             .eq("id", value: habitID)
             .single()
             .execute()

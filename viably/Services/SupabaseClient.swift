@@ -34,10 +34,17 @@ private let postgresDecoder: JSONDecoder = {
     return decoder
 }()
 
-let supabase = SupabaseClient(
-    supabaseURL: URL(string: Secrets.supabaseURL)!,
-    supabaseKey: Secrets.supabaseAnonKey,
-    options: SupabaseClientOptions(
-        db: SupabaseClientOptions.DatabaseOptions(decoder: postgresDecoder)
+private func makeSupabaseClient() -> SupabaseClient {
+    guard let url = URL(string: Secrets.supabaseURL) else {
+        preconditionFailure("Invalid Supabase URL: \(Secrets.supabaseURL)")
+    }
+    return SupabaseClient(
+        supabaseURL: url,
+        supabaseKey: Secrets.supabaseAnonKey,
+        options: SupabaseClientOptions(
+            db: SupabaseClientOptions.DatabaseOptions(decoder: postgresDecoder)
+        )
     )
-)
+}
+
+let supabase = makeSupabaseClient()
