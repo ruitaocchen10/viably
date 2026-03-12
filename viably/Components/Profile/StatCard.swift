@@ -4,12 +4,19 @@ struct StatCard: View {
     let label: String
     let value: Int
     var color: Color = .dsAccentYellow
+    var emoji: String? = nil
 
     var body: some View {
         VStack(spacing: 4) {
-            Text("\(value)")
-                .font(.dsXBoldHeading)
-                .foregroundColor(color)
+            HStack(spacing: 2) {
+                if let emoji = emoji {
+                    Text(emoji)
+                        .font(.dsXBoldHeading)
+                }
+                Text("\(value)")
+                    .font(.dsXBoldHeading)
+                    .foregroundColor(color)
+            }
             Text(label)
                 .font(.dsCaption)
                 .foregroundColor(.dsTextMuted)

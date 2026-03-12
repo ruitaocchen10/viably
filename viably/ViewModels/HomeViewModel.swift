@@ -48,6 +48,14 @@ final class HomeViewModel: ObservableObject {
             habits = fetchedHabits
             completedHabitIDs = Set(fetchedCompletions.map { $0.habitID })
             todayScore = fetchedScore
+
+            let (computedScore, computedMax, computedViable) = recalculateScore()
+            todayScore = try await DailyScoreService.upsertToday(
+                userID: userID,
+                score: computedScore,
+                maxScore: computedMax,
+                isViableDay: computedViable
+            )
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -116,7 +124,12 @@ final class HomeViewModel: ObservableObject {
             .filter { completedHabitIDs.contains($0.id) }
             .reduce(0) { $0 + $1.currentStreak }
 
-        let maxScore = habits.reduce(0) { $0 + $1.currentStreak }
+        let maxScore = habits.reduce(0) { result, habit in
+            let potentialStreak = completedHabitIDs.contains(habit.id)
+                ? habit.currentStreak          // already updated after completion
+                : habit.currentStreak + 1      // would increment on completion
+            return result + potentialStreak
+        }
 
         let mvdHabits = habits.filter { $0.isMVD }
         let isViableDay = !mvdHabits.isEmpty && mvdHabits.allSatisfy { completedHabitIDs.contains($0.id) }

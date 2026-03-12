@@ -42,13 +42,15 @@ struct DailyScoreCard: View {
                     .font(.dsCaption)
                     .foregroundColor(.dsAccentLime)
             } else if mvdHabitsRemaining > 0 {
-                Text("\(mvdHabitsRemaining) habit\(mvdHabitsRemaining == 1 ? "" : "s") to reach ")
-                    .font(.dsCaption)
-                    .foregroundColor(.dsTextMuted)
-                + Text("Minimum Viable Day")
-                    .font(.dsCaption)
-                    .bold()
-                    .foregroundColor(.dsAccentLime)
+                HStack(spacing: 0) {
+                    Text("\(mvdHabitsRemaining) habit\(mvdHabitsRemaining == 1 ? "" : "s") to reach ")
+                        .font(.dsCaption)
+                        .foregroundColor(.dsTextMuted)
+                    Text("Minimum Viable Day")
+                        .font(.dsCaption)
+                        .bold()
+                        .foregroundColor(.dsAccentLime)
+                }
             } else {
                 Text("Complete your habits to build your score")
                     .font(.dsCaption)

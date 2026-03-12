@@ -10,6 +10,7 @@ struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     @StateObject private var profileVM = ProfileViewModel()
     @State private var showProfile = false
+    @AppStorage("hasSeenHoldCoachMark") private var hasSeenCoachMark = false
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: .now)
@@ -103,12 +104,28 @@ struct HomeView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 24)
                             } else {
-                                ForEach(viewModel.habits) { habit in
+                                ForEach(Array(viewModel.habits.enumerated()), id: \.element.id) { index, habit in
                                     HabitRow(
                                         habit: habit,
                                         isCompleted: viewModel.completedHabitIDs.contains(habit.id)
                                     ) {
+                                        if !hasSeenCoachMark {
+                                            withAnimation { hasSeenCoachMark = true }
+                                        }
                                         Task { await viewModel.toggleCompletion(for: habit) }
+                                    }
+                                    .overlay(alignment: .bottom) {
+                                        if index == 0 && !hasSeenCoachMark {
+                                            Text("Hold to complete")
+                                                .font(.caption)
+                                                .padding(.horizontal, 10)
+                                                .padding(.vertical, 5)
+                                                .background(Capsule().fill(Color.dsAccentLime.opacity(0.9)))
+                                                .foregroundColor(.black)
+                                                .offset(y: 28)
+                                                .transition(.opacity.combined(with: .scale))
+                                                .zIndex(1)
+                                        }
                                     }
                                 }
                             }
@@ -130,6 +147,7 @@ struct HomeView: View {
                 }
             }
         }
+        .task { await viewModel.loadAll() }
     }
 }
 

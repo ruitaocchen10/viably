@@ -13,6 +13,7 @@ struct HabitService {
             .value
     }
 
+    @discardableResult
     static func create(_ habit: Habit) async throws -> Habit {
         try await supabase
             .from("habits")

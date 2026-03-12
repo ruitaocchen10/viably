@@ -2,8 +2,8 @@ import Foundation
 import Supabase
 
 struct AuthService {
-    static func authStateChanges() async -> AsyncStream<(event: AuthChangeEvent, session: Session?)> {
-        await supabase.auth.authStateChanges
+    static func authStateChanges() -> AsyncStream<(event: AuthChangeEvent, session: Session?)> {
+        supabase.auth.authStateChanges
     }
 
     static func signIn(provider: Provider, redirectTo: URL, authenticate: (URL) async throws -> URL) async throws {

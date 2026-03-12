@@ -62,8 +62,8 @@ final class MyHabitsViewModel: ObservableObject {
             createdAt: .now
         )
         do {
-            let created = try await HabitService.create(habit)
-            habits.append(created)
+            try await HabitService.create(habit)
+            await loadHabits()
         } catch {
             errorMessage = error.localizedDescription
         }

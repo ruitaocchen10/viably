@@ -82,16 +82,32 @@ struct MyHabitsView: View {
     // MARK: - Subviews
 
     private var emptyState: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "plus.circle.dashed")
-                .font(.system(size: 48))
-                .foregroundColor(.dsTextMuted)
-            Text("No habits yet")
-                .font(.dsBoldSectionLabel)
-                .foregroundColor(.dsTextPrimary)
-            Text("Tap + to create your first habit")
-                .font(.dsSemiBoldLabel)
-                .foregroundColor(.dsTextMuted)
+        VStack(spacing: 16) {
+            Text("🔥")
+                .font(.system(size: 56))
+
+            VStack(spacing: 6) {
+                Text("What will you build?")
+                    .font(.dsXBoldSubtitle)
+                    .foregroundColor(.dsTextPrimary)
+                Text("Every streak starts with day 1.")
+                    .font(.dsSemiBoldLabel)
+                    .foregroundColor(.dsTextMuted)
+            }
+
+            Button {
+                showNewHabitSheet = true
+            } label: {
+                Text("Add your first habit")
+                    .font(.dsBoldSectionLabel)
+                    .foregroundColor(.dsBackground)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Color.dsAccentLime)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+            }
+            .padding(.horizontal, 32)
+            .padding(.top, 8)
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 80)

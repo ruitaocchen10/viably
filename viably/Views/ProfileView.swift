@@ -107,7 +107,7 @@ struct ProfileView: View {
             profileInfo
 
             HStack(spacing: 12) {
-                StatCard(label: "Best Streak", value: 0, color: .dsAccentOrange)
+                StatCard(label: "Best Streak", value: 0, color: .dsAccentOrange, emoji: "🔥")
                 StatCard(label: "High Score",  value: 0, color: .dsAccentLime)
                 StatCard(label: "Friends",     value: 0, color: .dsAccentPurple)
             }

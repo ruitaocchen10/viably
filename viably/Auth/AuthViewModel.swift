@@ -26,7 +26,7 @@ class AuthViewModel: ObservableObject {
     }
 
     private func listenToAuthChanges() async {
-        for await (event, session) in await AuthService.authStateChanges() {
+        for await (event, session) in AuthService.authStateChanges() {
             isCheckingSession = false
             switch event {
             case .initialSession, .signedIn:
@@ -69,10 +69,10 @@ private class WebAuthContext: NSObject, ASWebAuthenticationPresentationContextPr
     private var session: ASWebAuthenticationSession?
 
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        UIApplication.shared.connectedScenes
+        let scene = UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
-            .flatMap { $0.windows }
-            .first { $0.isKeyWindow } ?? ASPresentationAnchor()
+            .first!
+        return scene.keyWindow ?? UIWindow(windowScene: scene)
     }
 
     func authenticate(url: URL) async throws -> URL {

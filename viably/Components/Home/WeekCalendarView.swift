@@ -61,7 +61,7 @@ private struct DayCell: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, isToday ? 14 : 10)
-        .background(isToday ? Color(hex: "#1a2e1a") : Color.clear)
+        .background(isToday ? Color(hex: "#1a2e1a") : Color.dsSurface)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
