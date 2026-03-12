@@ -82,6 +82,8 @@ final class HomeViewModel: ObservableObject {
             completedHabitIDs.insert(habit.id)
         }
 
+        var completionPersisted = false
+
         do {
             // 2. Persist completion change
             if isCurrentlyCompleted {
@@ -89,6 +91,7 @@ final class HomeViewModel: ObservableObject {
             } else {
                 try await HabitCompletionService.complete(habitID: habit.id, userID: userID, on: .now)
             }
+            completionPersisted = true
 
             // 3. Compute and persist streak
             let newStreak = try await computeNewStreak(for: habit, completing: !isCurrentlyCompleted)
@@ -117,6 +120,18 @@ final class HomeViewModel: ObservableObject {
             } else {
                 completedHabitIDs.remove(habit.id)
             }
+
+            // Compensate DB if Write 1 succeeded but a later write failed
+            if completionPersisted {
+                if isCurrentlyCompleted {
+                    // uncomplete() deleted the row — re-insert it
+                    try? await HabitCompletionService.complete(habitID: habit.id, userID: userID, on: .now)
+                } else {
+                    // complete() inserted the row — delete it
+                    try? await HabitCompletionService.uncomplete(habitID: habit.id, on: .now)
+                }
+            }
+
             errorMessage = error.localizedDescription
         }
     }
