@@ -82,16 +82,16 @@ struct HomeView: View {
                                         .font(.system(size: 48))
                                         .foregroundColor(.dsAccentLime)
                                     Text("Start building streaks")
-                                        .font(.dsXBoldHeading)
+                                        .font(.dsBoldSubtitle)
                                         .foregroundColor(.dsTextPrimary)
                                     Text("Add your first habit and start tracking your progress.")
-                                        .font(.dsCaption)
+                                        .font(.dsSemiBoldCaption)
                                         .foregroundColor(.dsTextMuted)
                                         .multilineTextAlignment(.center)
                                     Button("Add your first habit") {
                                         selectedTab = 2
                                     }
-                                    .font(.dsSemiBoldSectionLabel)
+                                    .font(.dsBoldSubtitle)
                                     .foregroundColor(.dsBackground)
                                     .padding(.horizontal, 24)
                                     .padding(.vertical, 12)

@@ -11,12 +11,27 @@ struct MyHabitsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     // Header
-                    Text("My Habits")
-                        .font(.dsXBoldHeading)
-                        .foregroundColor(.dsTextPrimary)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 16)
-                        .padding(.bottom, 24)
+                    HStack {
+                        Text("My Habits")
+                            .font(.dsXBoldTitle)
+                            .foregroundColor(.dsTextPrimary)
+                        Spacer()
+                        Button {
+                            showNewHabitSheet = true
+                        } label: {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.dsAccentLime)
+                                    .frame(width: 32, height: 32)
+                                Image(systemName: "plus")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.dsBackground)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
+                    .padding(.bottom, 24)
 
                     if vm.isLoading {
                         HStack {
@@ -34,18 +49,6 @@ struct MyHabitsView: View {
                 }
             }
         }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    showNewHabitSheet = true
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.dsAccentLime)
-                }
-            }
-        }
-        .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showNewHabitSheet) {
             NewHabitSheet(vm: vm)
         }

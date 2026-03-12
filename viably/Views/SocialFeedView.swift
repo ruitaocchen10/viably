@@ -9,7 +9,7 @@ struct SocialFeedView: View {
     var body: some View {
         ZStack {
             Color.dsBackground.ignoresSafeArea()
-            VStack(spacing: 16) {
+            VStack(spacing: 8) {
                 Image(systemName: "flame.fill")
                     .font(.system(size: 48))
                     .foregroundColor(.dsAccentLime)
