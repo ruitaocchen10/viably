@@ -50,6 +50,7 @@ struct HabitRow: View {
     @State private var completionFlash: CGFloat = 0.0
     @State private var completionScale: CGFloat = 1.0
     @State private var streakBump: CGFloat = 1.0
+    @State private var isAnimatingCompletion: Bool = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -113,23 +114,22 @@ struct HabitRow: View {
         .scaleEffect(completionScale)
         .onLongPressGesture(minimumDuration: 1.0, pressing: { isPressing in
             guard !isCompleted else { return }
+            if !isPressing && isAnimatingCompletion { return }
             withAnimation(isPressing ? .linear(duration: 0.82) : .spring(duration: 0.2)) {
                 pressProgress = isPressing ? 1.0 : 0.0
             }
         }, perform: {
             guard !isCompleted else { return }
+            isAnimatingCompletion = true
             onTap()
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-
-            // Snap blobs to fully converged, counteracting the spring-back from pressing=false
-            withAnimation(.linear(duration: 0.05)) { pressProgress = 1.0 }
 
             // Flash in
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                 withAnimation(.easeIn(duration: 0.12)) { completionFlash = 0.45 }
             }
 
-            // Flash out + fade blobs + bounces
+            // Flash out + fade blobs + scale bounce
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.17) {
                 withAnimation(.easeOut(duration: 0.28)) {
                     completionFlash = 0.0
@@ -137,7 +137,6 @@ struct HabitRow: View {
                 }
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
                     completionScale = 1.03
-                    streakBump = 1.3
                 }
             }
 
@@ -145,9 +144,16 @@ struct HabitRow: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.38) {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                     completionScale = 1.0
-                    streakBump = 1.0
                 }
+                isAnimatingCompletion = false
             }
         })
+        .onChange(of: habit.currentStreak) { oldValue, newValue in
+            guard newValue > oldValue else { return }
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) { streakBump = 1.3 }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.21) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) { streakBump = 1.0 }
+            }
+        }
     }
 }

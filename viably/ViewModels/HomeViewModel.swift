@@ -99,16 +99,16 @@ final class HomeViewModel: ObservableObject {
                 habits[idx].currentStreak = newStreak
             }
 
-            // 5. Recalculate and persist daily score
-            let (newScore, newMax, newIsViable) = recalculateScore()
+            // 5. Recalculate and persist daily score (maxScore is frozen at load time)
+            let (newScore, newIsViable) = recalculateScoreOnly()
+            let currentMax = todayScore?.maxScore ?? 0
             try await DailyScoreService.upsertToday(
                 userID: userID,
                 score: newScore,
-                maxScore: newMax,
+                maxScore: currentMax,
                 isViableDay: newIsViable
             )
             todayScore?.score = newScore
-            todayScore?.maxScore = newMax
             todayScore?.isViableDay = newIsViable
         } catch {
             // 6. Roll back optimistic update
@@ -133,21 +133,26 @@ final class HomeViewModel: ObservableObject {
         }
     }
 
-    private func recalculateScore() -> (score: Int, maxScore: Int, isViableDay: Bool) {
+    // Returns score and isViableDay only — maxScore is NOT recomputed here.
+    // Called from toggleCompletion() to keep maxScore frozen at its load-time value.
+    private func recalculateScoreOnly() -> (score: Int, isViableDay: Bool) {
         let score = habits
             .filter { completedHabitIDs.contains($0.id) }
             .reduce(0) { $0 + $1.currentStreak }
+        let mvdHabits = habits.filter { $0.isMVD }
+        let isViableDay = !mvdHabits.isEmpty && mvdHabits.allSatisfy { completedHabitIDs.contains($0.id) }
+        return (score, isViableDay)
+    }
 
+    // Full recompute — only called from loadAll() where DB streaks are authoritative.
+    private func recalculateScore() -> (score: Int, maxScore: Int, isViableDay: Bool) {
+        let (score, isViableDay) = recalculateScoreOnly()
         let maxScore = habits.reduce(0) { result, habit in
             let potentialStreak = completedHabitIDs.contains(habit.id)
-                ? habit.currentStreak          // already updated after completion
+                ? habit.currentStreak          // already completed today
                 : habit.currentStreak + 1      // would increment on completion
             return result + potentialStreak
         }
-
-        let mvdHabits = habits.filter { $0.isMVD }
-        let isViableDay = !mvdHabits.isEmpty && mvdHabits.allSatisfy { completedHabitIDs.contains($0.id) }
-
         return (score, maxScore, isViableDay)
     }
 }
