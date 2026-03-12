@@ -47,4 +47,28 @@ struct HabitService {
             .eq("id", value: habitID)
             .execute()
     }
+
+    static func delete(habitID: UUID) async throws {
+        try await supabase
+            .from("habits")
+            .delete()
+            .eq("id", value: habitID)
+            .execute()
+    }
+
+    static func update(habitID: UUID, name: String, icon: String?, description: String?, isMVD: Bool) async throws -> Habit {
+        struct Payload: Encodable {
+            let name: String
+            let icon: String?
+            let description: String?
+            let is_mvd: Bool
+        }
+        return try await supabase
+            .from("habits")
+            .update(Payload(name: name, icon: icon, description: description, is_mvd: isMVD))
+            .eq("id", value: habitID)
+            .single()
+            .execute()
+            .value
+    }
 }

@@ -41,15 +41,25 @@ private struct FlowLayout: Layout {
     }
 }
 
-struct NewHabitSheet: View {
+struct EditHabitSheet: View {
     @ObservedObject var vm: MyHabitsViewModel
+    let habit: Habit
     @Environment(\.dismiss) private var dismiss
 
-    @State private var name = ""
-    @State private var description = ""
-    @State private var selectedIcon: String? = nil
-    @State private var isMVD = false
+    @State private var name: String
+    @State private var description: String
+    @State private var selectedIcon: String?
+    @State private var isMVD: Bool
     @State private var isSaving = false
+
+    init(vm: MyHabitsViewModel, habit: Habit) {
+        self.vm = vm
+        self.habit = habit
+        _name = State(initialValue: habit.name)
+        _description = State(initialValue: habit.description ?? "")
+        _selectedIcon = State(initialValue: habit.icon)
+        _isMVD = State(initialValue: habit.isMVD)
+    }
 
     private var canSave: Bool { !name.trimmingCharacters(in: .whitespaces).isEmpty }
 
@@ -136,7 +146,7 @@ struct NewHabitSheet: View {
                     .padding(20)
                 }
             }
-            .navigationTitle("New Habit")
+            .navigationTitle("Edit Habit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -180,7 +190,8 @@ struct NewHabitSheet: View {
     private func save() async {
         isSaving = true
         let trimmedDescription = description.trimmingCharacters(in: .whitespaces)
-        await vm.createHabit(
+        await vm.updateHabit(
+            id: habit.id,
             name: name.trimmingCharacters(in: .whitespaces),
             icon: selectedIcon,
             description: trimmedDescription.isEmpty ? nil : trimmedDescription,

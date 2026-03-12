@@ -29,13 +29,33 @@ final class MyHabitsViewModel: ObservableObject {
         }
     }
 
-    func createHabit(name: String, icon: String?, isMVD: Bool) async {
+    func deleteHabit(id: UUID) async {
+        do {
+            try await HabitService.delete(habitID: id)
+            habits.removeAll { $0.id == id }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func updateHabit(id: UUID, name: String, icon: String?, description: String?, isMVD: Bool) async {
+        do {
+            let updated = try await HabitService.update(habitID: id, name: name, icon: icon, description: description, isMVD: isMVD)
+            if let idx = habits.firstIndex(where: { $0.id == id }) {
+                habits[idx] = updated
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func createHabit(name: String, icon: String?, description: String? = nil, isMVD: Bool) async {
         let habit = Habit(
             id: UUID(),
             userID: userID,
             name: name,
             icon: icon,
-            description: nil,
+            description: description,
             isMVD: isMVD,
             isActive: true,
             currentStreak: 0,

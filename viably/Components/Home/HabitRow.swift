@@ -8,9 +8,16 @@ struct HabitRow: View {
     var body: some View {
         HStack(spacing: 12) {
             // Icon placeholder
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color(hex: "#2a2a3a"))
-                .frame(width: 48, height: 48)
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color(hex: "#2a2a3a"))
+                    .frame(width: 48, height: 48)
+                if let icon = habit.icon {
+                    Text(icon)
+                        .font(.system(size: 26))
+                }
+            }
+            .frame(width: 48, height: 48)
 
             // Name + MVD badge
             VStack(alignment: .leading, spacing: 4) {
@@ -39,6 +46,10 @@ struct HabitRow: View {
         .padding(12)
         .background(isCompleted ? Color(hex: "#162316") : Color.dsSurface)
         .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+        )
         .onTapGesture { onTap() }
     }
 }

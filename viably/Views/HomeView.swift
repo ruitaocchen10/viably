@@ -81,17 +81,19 @@ struct HomeView: View {
                                     Image(systemName: "checkmark.circle.dashed")
                                         .font(.system(size: 48))
                                         .foregroundColor(.dsAccentLime)
-                                    Text("Start building streaks")
-                                        .font(.dsBoldSubtitle)
-                                        .foregroundColor(.dsTextPrimary)
-                                    Text("Add your first habit and start tracking your progress.")
-                                        .font(.dsSemiBoldCaption)
-                                        .foregroundColor(.dsTextMuted)
-                                        .multilineTextAlignment(.center)
+                                    VStack(spacing: 8) {
+                                        Text("Start building streaks")
+                                            .font(.dsBoldSubtitle)
+                                            .foregroundColor(.dsTextPrimary)
+                                        Text("Add your first habit and start tracking your progress.")
+                                            .font(.dsSemiBoldCaption)
+                                            .foregroundColor(.dsTextMuted)
+                                            .multilineTextAlignment(.center)
+                                    }
                                     Button("Add your first habit") {
                                         selectedTab = 2
                                     }
-                                    .font(.dsBoldSubtitle)
+                                    .font(.dsBoldSectionLabel)
                                     .foregroundColor(.dsBackground)
                                     .padding(.horizontal, 24)
                                     .padding(.vertical, 12)

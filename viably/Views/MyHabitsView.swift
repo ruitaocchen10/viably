@@ -3,6 +3,12 @@ import SwiftUI
 struct MyHabitsView: View {
     @StateObject private var vm = MyHabitsViewModel()
     @State private var showNewHabitSheet = false
+    @State private var habitToEdit: Habit? = nil
+    @State private var habitToDelete: Habit? = nil
+
+    private var deleteAlertBinding: Binding<Bool> {
+        Binding(get: { habitToDelete != nil }, set: { if !$0 { habitToDelete = nil } })
+    }
 
     var body: some View {
         ZStack {
@@ -52,6 +58,22 @@ struct MyHabitsView: View {
         .sheet(isPresented: $showNewHabitSheet) {
             NewHabitSheet(vm: vm)
         }
+        .sheet(item: $habitToEdit) { habit in
+            EditHabitSheet(vm: vm, habit: habit)
+        }
+        .alert("Delete Habit?", isPresented: deleteAlertBinding) {
+            Button("Delete", role: .destructive) {
+                if let habit = habitToDelete {
+                    Task { await vm.deleteHabit(id: habit.id) }
+                }
+                habitToDelete = nil
+            }
+            Button("Cancel", role: .cancel) {
+                habitToDelete = nil
+            }
+        } message: {
+            Text("This will permanently delete the habit and its streak.")
+        }
         .task {
             await vm.loadHabits()
         }
@@ -81,7 +103,9 @@ struct MyHabitsView: View {
                 HabitSection(
                     title: "Minimum Viable Day",
                     subtitle: "Complete these habits and your day is a win, no matter what",
-                    habits: vm.mvdHabits
+                    habits: vm.mvdHabits,
+                    onEdit: { habitToEdit = $0 },
+                    onDelete: { habitToDelete = $0 }
                 )
             }
 
@@ -89,7 +113,9 @@ struct MyHabitsView: View {
                 HabitSection(
                     title: "Other Habits",
                     subtitle: nil,
-                    habits: vm.otherHabits
+                    habits: vm.otherHabits,
+                    onEdit: { habitToEdit = $0 },
+                    onDelete: { habitToDelete = $0 }
                 )
             }
 
@@ -98,7 +124,9 @@ struct MyHabitsView: View {
                     title: "Inactive Habits",
                     subtitle: nil,
                     habits: vm.inactiveHabits,
-                    muted: true
+                    muted: true,
+                    onEdit: { habitToEdit = $0 },
+                    onDelete: { habitToDelete = $0 }
                 )
             }
         }
@@ -113,6 +141,8 @@ private struct HabitSection: View {
     let subtitle: String?
     let habits: [Habit]
     var muted: Bool = false
+    var onEdit: (Habit) -> Void = { _ in }
+    var onDelete: (Habit) -> Void = { _ in }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -130,7 +160,11 @@ private struct HabitSection: View {
 
             VStack(spacing: 0) {
                 ForEach(habits) { habit in
-                    HabitLibraryRow(habit: habit)
+                    HabitLibraryRow(
+                        habit: habit,
+                        onEdit: { onEdit(habit) },
+                        onDelete: { onDelete(habit) }
+                    )
                     if habit.id != habits.last?.id {
                         Divider()
                             .background(Color.dsBorder)
@@ -142,56 +176,6 @@ private struct HabitSection: View {
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .padding(.horizontal, 16)
         }
-    }
-}
-
-// MARK: - HabitLibraryRow
-
-private struct HabitLibraryRow: View {
-    let habit: Habit
-
-    var body: some View {
-        HStack(spacing: 12) {
-            // Icon
-            ZStack {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.dsBackground)
-                    .frame(width: 40, height: 40)
-                Text(habit.icon ?? "⭐")
-                    .font(.system(size: 20))
-            }
-
-            // Name + MVD badge
-            VStack(alignment: .leading, spacing: 2) {
-                Text(habit.name)
-                    .font(.dsSemiBoldSectionLabel)
-                    .foregroundColor(.dsTextPrimary)
-                if habit.isMVD {
-                    Text("MVD")
-                        .font(.dsCaption)
-                        .foregroundColor(.dsAccentPurple)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.dsAccentPurple.opacity(0.15))
-                        .clipShape(Capsule())
-                }
-            }
-
-            Spacer()
-
-            // Streak
-            if habit.currentStreak > 0 {
-                HStack(spacing: 2) {
-                    Text("🔥")
-                        .font(.system(size: 12))
-                    Text("\(habit.currentStreak)")
-                        .font(.dsSemiBoldCaption)
-                        .foregroundColor(.dsTextMuted)
-                }
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
     }
 }
 
