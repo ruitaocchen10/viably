@@ -30,7 +30,10 @@ final class HomeViewModel: ObservableObject {
     private let userID: UUID
 
     init() {
-        self.userID = supabase.auth.currentUser?.id ?? UUID()
+        guard let id = supabase.auth.currentUser?.id else {
+            preconditionFailure("ViewModel initialized without authenticated user")
+        }
+        self.userID = id
         Task { await loadAll() }
     }
 
