@@ -69,16 +69,6 @@ struct DailyScoreCard: View {
                     }
                     .animation(.spring(response: 0.6, dampingFraction: 0.8), value: progressFraction)
 
-                    // Glow dot at leading edge of fill
-                    if progressFraction > 0 {
-                        Circle()
-                            .fill(Color.dsAccentLime)
-                            .frame(width: 10, height: 10)
-                            .blur(radius: 3)
-                            .offset(x: max(0, geo.size.width * progressFraction - 5), y: 0)
-                            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: progressFraction)
-                    }
-
                     // Sparkle overlay
                     if showSparkles {
                         let barCenterX = geo.size.width * progressFraction / 2

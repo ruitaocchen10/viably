@@ -26,7 +26,7 @@ private let postgresDecoder: JSONDecoder = {
         let dateOnly = DateFormatter()
         dateOnly.dateFormat = "yyyy-MM-dd"
         dateOnly.locale = Locale(identifier: "en_US_POSIX")
-        dateOnly.timeZone = TimeZone(identifier: "UTC")
+        dateOnly.timeZone = .current
         if let date = dateOnly.date(from: string) { return date }
 
         throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot decode date: \(string)")
