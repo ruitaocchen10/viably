@@ -24,15 +24,27 @@ struct HabitCompletionService {
     }
 
     static func complete(habitID: UUID, userID: UUID, on date: Date) async throws {
-        let payload: [String: AnyJSON] = [
-            "habit_id": .string(habitID.uuidString),
-            "user_id": .string(userID.uuidString),
-            "completed_date": .string(isoDateString(from: date))
-        ]
+        let payload = InsertPayload(
+            habitID: habitID,
+            userID: userID,
+            completedDate: isoDateString(from: date)
+        )
         try await supabase
             .from("habit_completions")
             .insert(payload)
             .execute()
+    }
+
+    private struct InsertPayload: Encodable {
+        let habitID: UUID
+        let userID: UUID
+        let completedDate: String
+
+        enum CodingKeys: String, CodingKey {
+            case habitID = "habit_id"
+            case userID = "user_id"
+            case completedDate = "completed_date"
+        }
     }
 
     static func uncomplete(habitID: UUID, on date: Date) async throws {
