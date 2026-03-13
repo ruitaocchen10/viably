@@ -45,7 +45,7 @@ final class ProfileViewModel: ObservableObject {
     }
 
     func uploadAvatar(_ data: Data) async throws -> String {
-        let path = "\(userID)/avatar.jpg"
+        let path = "\(userID.uuidString.lowercased())/avatar.jpg"
         try await supabase.storage
             .from("avatars")
             .upload(path, data: data, options: FileOptions(contentType: "image/jpeg", upsert: true))
@@ -58,24 +58,31 @@ final class ProfileViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
-        do {
-            var newAvatarURL = existing.avatarURL
-            if let data = pendingAvatarData {
+
+        var newAvatarURL = existing.avatarURL
+        if let data = pendingAvatarData {
+            do {
                 newAvatarURL = try await uploadAvatar(data)
                 pendingAvatarData = nil
+            } catch {
+                errorMessage = "[Storage] \(error)"
+                return
             }
-            let updated = Profile(
-                id: existing.id,
-                username: editUsername,
-                displayName: editDisplayName.isEmpty ? nil : editDisplayName,
-                avatarURL: newAvatarURL,
-                createdAt: existing.createdAt
-            )
-            profile = try await ProfileService.upsert(updated)
+        }
+
+        let updated = Profile(
+            id: existing.id,
+            username: editUsername,
+            displayName: editDisplayName.isEmpty ? nil : editDisplayName,
+            avatarURL: newAvatarURL,
+            createdAt: existing.createdAt
+        )
+        do {
+            profile = try await ProfileService.update(updated)
             editUsername = profile?.username ?? editUsername
             editDisplayName = profile?.displayName ?? ""
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = "[DB] \(error)"
         }
     }
 }

@@ -33,11 +33,13 @@ struct ContentView: View {
             }
             .tag(2)
 
-            ProfileView()
-                .tabItem {
-                    Label("Profile", systemImage: "person.fill")
-                }
-                .tag(3)
+            NavigationStack {
+                ProfileView()
+            }
+            .tabItem {
+                Label("Profile", systemImage: "person.fill")
+            }
+            .tag(3)
         }
         .tint(.dsAccentLime)
     }

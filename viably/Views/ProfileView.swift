@@ -31,12 +31,14 @@ struct ProfileView: View {
                 }
             }
         }
+        .ignoresSafeArea(edges: .top)
         .background(Color.dsBackground.ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Edit") { showingEdit = true }
-                    .foregroundColor(.dsTextPrimary)
+                    .foregroundColor(.white)
             }
         }
         .sheet(isPresented: $showingEdit) {

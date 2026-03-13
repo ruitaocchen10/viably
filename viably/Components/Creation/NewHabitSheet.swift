@@ -51,6 +51,9 @@ struct NewHabitSheet: View {
     @State private var isMVD = false
     @State private var isSaving = false
 
+    @FocusState private var isNameFocused: Bool
+    @FocusState private var isDescFocused: Bool
+
     private var canSave: Bool { !name.trimmingCharacters(in: .whitespaces).isEmpty }
 
     var body: some View {
@@ -63,23 +66,27 @@ struct NewHabitSheet: View {
                         // Name field
                         fieldSection(label: "Habit Name") {
                             TextField("e.g. Morning run", text: $name)
+                                .focused($isNameFocused)
                                 .font(.dsSemiBoldSectionLabel)
                                 .foregroundColor(.dsTextPrimary)
                                 .tint(.dsAccentLime)
                                 .padding(14)
                                 .background(Color.dsSurface)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .contentShape(RoundedRectangle(cornerRadius: 12))
                         }
 
                         // Description field
                         fieldSection(label: "Description") {
                             TextField("e.g. Run 30 minutes outside", text: $description)
+                                .focused($isDescFocused)
                                 .font(.dsSemiBoldSectionLabel)
                                 .foregroundColor(.dsTextPrimary)
                                 .tint(.dsAccentLime)
                                 .padding(14)
                                 .background(Color.dsSurface)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .contentShape(RoundedRectangle(cornerRadius: 12))
                         }
 
                         // Icon picker
@@ -135,6 +142,7 @@ struct NewHabitSheet: View {
                     }
                     .padding(20)
                 }
+                .scrollDismissesKeyboard(.interactively)
             }
             .navigationTitle("New Habit")
             .navigationBarTitleDisplayMode(.inline)
