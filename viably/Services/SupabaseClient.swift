@@ -34,13 +34,21 @@ private let postgresDecoder: JSONDecoder = {
     return decoder
 }()
 
+private func config(_ key: String) -> String {
+    guard let value = Bundle.main.infoDictionary?[key] as? String, !value.isEmpty else {
+        fatalError("Missing required config key '\(key)' — check Config.xcconfig")
+    }
+    return value
+}
+
 private func makeSupabaseClient() -> SupabaseClient {
-    guard let url = URL(string: Secrets.supabaseURL) else {
-        preconditionFailure("Invalid Supabase URL: \(Secrets.supabaseURL)")
+    let urlString = "https://\(config("SUPABASE_HOST"))"
+    guard let url = URL(string: urlString) else {
+        preconditionFailure("Invalid Supabase URL: \(urlString)")
     }
     return SupabaseClient(
         supabaseURL: url,
-        supabaseKey: Secrets.supabaseAnonKey,
+        supabaseKey: config("SUPABASE_ANON_KEY"),
         options: SupabaseClientOptions(
             db: SupabaseClientOptions.DatabaseOptions(decoder: postgresDecoder)
         )

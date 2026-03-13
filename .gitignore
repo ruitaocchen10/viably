@@ -6,6 +6,7 @@ DerivedData/
 
 # Secrets — never commit real keys
 viably/Secrets
+viably/Config/Config.xcconfig
 
 # macOS
 .DS_Store

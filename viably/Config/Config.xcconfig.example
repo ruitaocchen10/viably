@@ -1,0 +1,5 @@
+// Config.xcconfig — gitignored, never commit this file.
+// Copy this file to Config.xcconfig and fill in your values.
+
+SUPABASE_HOST = YOUR_SUPABASE_HOST_HERE
+SUPABASE_ANON_KEY = YOUR_SUPABASE_ANON_KEY_HERE
