@@ -7,6 +7,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @StateObject private var viewModel = ProfileViewModel()
+    @State private var showingEdit = false
 
     var body: some View {
         ScrollView {
@@ -31,6 +32,16 @@ struct ProfileView: View {
             }
         }
         .background(Color.dsBackground.ignoresSafeArea())
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Edit") { showingEdit = true }
+                    .foregroundColor(.dsTextPrimary)
+            }
+        }
+        .sheet(isPresented: $showingEdit) {
+            EditProfileView(viewModel: viewModel)
+        }
     }
 
     // MARK: - Header
@@ -107,8 +118,8 @@ struct ProfileView: View {
             profileInfo
 
             HStack(spacing: 12) {
-                StatCard(label: "Best Streak", value: 0, color: .dsAccentOrange, emoji: "🔥")
-                StatCard(label: "High Score",  value: 0, color: .dsAccentLime)
+                StatCard(label: "Best Streak", value: viewModel.bestStreak, color: .dsAccentOrange, emoji: "🔥")
+                StatCard(label: "High Score",  value: viewModel.highScore, color: .dsAccentLime)
                 StatCard(label: "Friends",     value: 0, color: .dsAccentPurple)
             }
         }

@@ -13,6 +13,18 @@ struct DailyScoreService {
         return results.first
     }
 
+    static func fetchHighScore(for userID: UUID) async throws -> Int {
+        let results: [DailyScore] = try await supabase
+            .from("daily_scores")
+            .select()
+            .eq("user_id", value: userID)
+            .order("score", ascending: false)
+            .limit(1)
+            .execute()
+            .value
+        return results.first?.score ?? 0
+    }
+
     static func upsertToday(userID: UUID, score: Int, maxScore: Int, isViableDay: Bool) async throws {
         let payload = UpsertPayload(
             userID: userID,
