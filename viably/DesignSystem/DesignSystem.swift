@@ -15,6 +15,10 @@ extension Color {
     static let dsAccentOrange = Color(hex: "#ff6b2b")
     static let dsTextPrimary  = Color(hex: "#ffffff")
     static let dsTextMuted    = Color(hex: "#6b6880")
+    static let dsIconBackground    = Color(hex: "#2a2a3a")
+    static let dsCompletedHabitBg  = Color(hex: "#162316")
+    static let dsTodayHighlight    = Color(hex: "#1a2e1a")
+    static let dsGradientAccentEnd = Color(hex: "#3a4a2a")
 
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)

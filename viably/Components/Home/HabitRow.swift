@@ -44,6 +44,7 @@ struct LiquidBlobShape: Shape {
 struct HabitRow: View {
     let habit: Habit
     let isCompleted: Bool
+    let onUncomplete: (() -> Void)?
     let onTap: () -> Void
 
     @State private var pressProgress: CGFloat = 0.0
@@ -51,13 +52,14 @@ struct HabitRow: View {
     @State private var completionScale: CGFloat = 1.0
     @State private var streakBump: CGFloat = 1.0
     @State private var isAnimatingCompletion: Bool = false
+    @State private var showUncompleteAlert = false
 
     var body: some View {
         HStack(spacing: 12) {
             // Icon placeholder
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(hex: "#2a2a3a"))
+                    .fill(Color.dsIconBackground)
                     .frame(width: 48, height: 48)
                 if let icon = habit.icon {
                     Text(icon)
@@ -98,7 +100,7 @@ struct HabitRow: View {
         .padding(12)
         .background(
             ZStack {
-                isCompleted ? Color(hex: "#162316") : Color.dsSurface
+                isCompleted ? Color.dsCompletedHabitBg : Color.dsSurface
                 LiquidBlobShape(progress: pressProgress, fromLeft: true)
                     .fill(Color.dsAccentLime.opacity(1.0))
                 LiquidBlobShape(progress: pressProgress, fromLeft: false)
@@ -148,6 +150,14 @@ struct HabitRow: View {
                 isAnimatingCompletion = false
             }
         })
+        .onTapGesture {
+            guard isCompleted else { return }
+            showUncompleteAlert = true
+        }
+        .alert("Remove completion?", isPresented: $showUncompleteAlert) {
+            Button("Remove", role: .destructive) { onUncomplete?() }
+            Button("Cancel", role: .cancel) {}
+        }
         .onChange(of: habit.currentStreak) { oldValue, newValue in
             guard newValue > oldValue else { return }
             withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) { streakBump = 1.3 }

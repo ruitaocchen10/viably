@@ -103,7 +103,10 @@ struct HomeView: View {
                                 ForEach(Array(viewModel.habits.enumerated()), id: \.element.id) { index, habit in
                                     HabitRow(
                                         habit: habit,
-                                        isCompleted: viewModel.completedHabitIDs.contains(habit.id)
+                                        isCompleted: viewModel.completedHabitIDs.contains(habit.id),
+                                        onUncomplete: {
+                                            Task { await viewModel.toggleCompletion(for: habit) }
+                                        }
                                     ) {
                                         if !hasSeenCoachMark {
                                             withAnimation { hasSeenCoachMark = true }

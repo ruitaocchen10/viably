@@ -38,7 +38,7 @@ struct ProfileView: View {
     private var header: some View {
         ZStack(alignment: .bottomLeading) {
             LinearGradient(
-                colors: [Color.dsAccentPurple, Color(hex: "#3a4a2a")],
+                colors: [Color.dsAccentPurple, Color.dsGradientAccentEnd],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )

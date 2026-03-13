@@ -59,11 +59,10 @@ final class HomeViewModel: ObservableObject {
                 maxScore: computedMax,
                 isViableDay: computedViable
             )
-            if var s = fetchedScore {
-                s.score = computedScore
-                s.maxScore = computedMax
-                s.isViableDay = computedViable
-                todayScore = s
+            if let s = fetchedScore {
+                todayScore = DailyScore(id: s.id, userID: s.userID, scoreDate: s.scoreDate,
+                                        score: computedScore, maxScore: computedMax,
+                                        isViableDay: computedViable, createdAt: s.createdAt)
             } else {
                 todayScore = try await DailyScoreService.fetchToday(for: userID)
             }
@@ -111,8 +110,11 @@ final class HomeViewModel: ObservableObject {
                 maxScore: currentMax,
                 isViableDay: newIsViable
             )
-            todayScore?.score = newScore
-            todayScore?.isViableDay = newIsViable
+            if let s = todayScore {
+                todayScore = DailyScore(id: s.id, userID: s.userID, scoreDate: s.scoreDate,
+                                        score: newScore, maxScore: s.maxScore,
+                                        isViableDay: newIsViable, createdAt: s.createdAt)
+            }
         } catch {
             // 6. Roll back optimistic update
             if isCurrentlyCompleted {
