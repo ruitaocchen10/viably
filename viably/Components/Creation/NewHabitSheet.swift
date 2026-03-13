@@ -144,9 +144,13 @@ struct NewHabitSheet: View {
                 }
                 .scrollDismissesKeyboard(.interactively)
             }
-            .navigationTitle("New Habit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("New Habit")
+                        .font(.dsSemiBoldSectionLabel)
+                        .foregroundColor(.dsTextPrimary)
+                }
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") { dismiss() }
                         .font(.dsSemiBoldLabel)

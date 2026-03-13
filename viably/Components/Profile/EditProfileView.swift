@@ -10,54 +10,114 @@ struct EditProfileView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    HStack {
-                        Spacer()
-                        PhotosPicker(selection: $photosItem, matching: .images) {
-                            ZStack(alignment: .bottomTrailing) {
-                                avatarPreview
-                                    .frame(width: 88, height: 88)
-                                    .clipShape(Circle())
-                                Image(systemName: "camera.fill")
-                                    .padding(6)
-                                    .background(Color.dsAccentPurple)
-                                    .clipShape(Circle())
-                                    .foregroundColor(.white)
+            ZStack {
+                Color.dsBackground.ignoresSafeArea()
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 28) {
+                        // Avatar picker
+                        HStack {
+                            Spacer()
+                            PhotosPicker(selection: $photosItem, matching: .images) {
+                                ZStack(alignment: .bottomTrailing) {
+                                    avatarPreview
+                                        .frame(width: 88, height: 88)
+                                        .clipShape(Circle())
+                                    Image(systemName: "camera.fill")
+                                        .padding(6)
+                                        .background(Color.dsAccentPurple)
+                                        .clipShape(Circle())
+                                        .foregroundColor(.white)
+                                }
                             }
+                            Spacer()
                         }
-                        Spacer()
-                    }
-                }
-                .listRowBackground(Color.clear)
 
-                Section("Display Name") {
-                    TextField("Display Name", text: $viewModel.editDisplayName)
-                }
+                        // Display Name field
+                        fieldSection(label: "Display Name") {
+                            TextField("Display Name", text: $viewModel.editDisplayName)
+                                .font(.dsSemiBoldSectionLabel)
+                                .foregroundColor(.dsTextPrimary)
+                                .tint(.dsAccentLime)
+                                .padding(14)
+                                .background(Color.dsSurface)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.dsBorder, lineWidth: 1)
+                                )
+                        }
 
-                Section("Username") {
-                    HStack {
-                        Text("@").foregroundColor(.dsTextMuted)
-                        TextField("username", text: $viewModel.editUsername)
-                            .autocorrectionDisabled()
-                            .textInputAutocapitalization(.never)
+                        // Username field
+                        fieldSection(label: "Username") {
+                            HStack {
+                                Text("@")
+                                    .font(.dsSemiBoldSectionLabel)
+                                    .foregroundColor(.dsTextMuted)
+                                TextField("username", text: $viewModel.editUsername)
+                                    .font(.dsSemiBoldSectionLabel)
+                                    .foregroundColor(.dsTextPrimary)
+                                    .tint(.dsAccentLime)
+                                    .autocorrectionDisabled()
+                                    .textInputAutocapitalization(.never)
+                            }
+                            .padding(14)
+                            .background(Color.dsSurface)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.dsBorder, lineWidth: 1)
+                            )
+                        }
+
+                        // Error message
+                        if let error = viewModel.errorMessage {
+                            Text(error)
+                                .font(.dsCaption)
+                                .foregroundColor(.red)
+                        }
+
+                        // Save CTA button
+                        Button {
+                            Task {
+                                await viewModel.save()
+                                if viewModel.errorMessage == nil { dismiss() }
+                            }
+                        } label: {
+                            ZStack {
+                                if viewModel.isLoading {
+                                    ProgressView()
+                                        .tint(.dsBackground)
+                                } else {
+                                    Text("Save Changes")
+                                        .font(.dsXBoldSubtitle)
+                                        .foregroundColor(.dsBackground)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 56)
+                            .background(Color.dsAccentLime)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                        }
+                        .disabled(viewModel.isLoading)
                     }
+                    .padding(20)
                 }
+                .scrollDismissesKeyboard(.interactively)
             }
-            .navigationTitle("Edit Profile")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Color.dsBackground, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Edit Profile")
+                        .font(.dsSemiBoldSectionLabel)
+                        .foregroundColor(.dsTextPrimary)
+                }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        Task {
-                            await viewModel.save()
-                            if viewModel.errorMessage == nil { dismiss() }
-                        }
-                    }
-                    .disabled(viewModel.isLoading)
+                        .font(.dsSemiBoldLabel)
+                        .foregroundColor(.dsTextMuted)
                 }
             }
             .onChange(of: photosItem) { _, item in
@@ -70,6 +130,18 @@ struct EditProfileView: View {
                     }
                 }
             }
+        }
+    }
+
+    // MARK: - Helpers
+
+    @ViewBuilder
+    private func fieldSection<Content: View>(label: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(label)
+                .font(.dsSemiBoldLabel)
+                .foregroundColor(.dsTextMuted)
+            content()
         }
     }
 

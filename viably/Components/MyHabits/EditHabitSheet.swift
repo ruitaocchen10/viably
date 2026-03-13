@@ -154,9 +154,13 @@ struct EditHabitSheet: View {
                 }
                 .scrollDismissesKeyboard(.interactively)
             }
-            .navigationTitle("Edit Habit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Edit Habit")
+                        .font(.dsSemiBoldSectionLabel)
+                        .foregroundColor(.dsTextPrimary)
+                }
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") { dismiss() }
                         .font(.dsSemiBoldLabel)
