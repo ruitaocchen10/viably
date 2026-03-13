@@ -68,35 +68,34 @@ struct HabitRow: View {
             }
             .frame(width: 48, height: 48)
 
-            // Name + streak + MVD badge
+            // Name + MVD badge
             VStack(alignment: .leading, spacing: 4) {
                 Text(habit.name)
                     .font(.dsSemiBoldSectionLabel)
                     .foregroundColor(isCompleted ? .dsAccentLime : .dsTextPrimary)
 
-                HStack(spacing: 6) {
-                    HStack(spacing: 4) {
-                        Text("🔥")
-                            .font(.system(size: 14))
-                        Text("\(habit.currentStreak)")
-                            .font(.dsXBoldHeading)
-                            .foregroundColor(.dsAccentYellow)
-                    }
-                    .scaleEffect(streakBump)
-
-                    if habit.isMVD {
-                        Text("MVD")
-                            .font(.dsCaption)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
-                            .background(Color.dsAccentPurple)
-                            .cornerRadius(6)
-                    }
+                if habit.isMVD {
+                    Text("MVD")
+                        .font(.dsCaption)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(Color.dsAccentPurple)
+                        .cornerRadius(6)
                 }
             }
 
             Spacer()
+
+            // Streak
+            HStack(spacing: 4) {
+                Text("🔥")
+                    .font(.system(size: 14))
+                Text("\(habit.currentStreak)")
+                    .font(.dsXBoldHeading)
+                    .foregroundColor(.dsAccentYellow)
+            }
+            .scaleEffect(streakBump)
         }
         .padding(12)
         .background(

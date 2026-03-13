@@ -16,34 +16,35 @@ struct HabitLibraryRow: View {
                     .font(.system(size: 20))
             }
 
-            // Name + MVD badge
+            // Name + streak + MVD badge
             VStack(alignment: .leading, spacing: 2) {
                 Text(habit.name)
                     .font(.dsSemiBoldSectionLabel)
                     .foregroundColor(.dsTextPrimary)
-                if habit.isMVD {
-                    Text("MVD")
-                        .font(.dsCaption)
-                        .foregroundColor(.dsAccentPurple)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.dsAccentPurple.opacity(0.15))
-                        .clipShape(Capsule())
+
+                HStack(spacing: 6) {
+                    if habit.currentStreak > 0 {
+                        HStack(spacing: 2) {
+                            Text("🔥")
+                                .font(.system(size: 12))
+                            Text("\(habit.currentStreak)")
+                                .font(.dsSemiBoldCaption)
+                                .foregroundColor(.dsTextMuted)
+                        }
+                    }
+                    if habit.isMVD {
+                        Text("MVD")
+                            .font(.dsCaption)
+                            .foregroundColor(.dsAccentPurple)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.dsAccentPurple.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
                 }
             }
 
             Spacer()
-
-            // Streak
-            if habit.currentStreak > 0 {
-                HStack(spacing: 2) {
-                    Text("🔥")
-                        .font(.system(size: 12))
-                    Text("\(habit.currentStreak)")
-                        .font(.dsSemiBoldCaption)
-                        .foregroundColor(.dsTextMuted)
-                }
-            }
 
             // Action buttons
             HStack(spacing: 8) {
