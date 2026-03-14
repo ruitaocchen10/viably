@@ -13,6 +13,24 @@ struct DailyScoreService {
         return results.first
     }
 
+    static func fetchWeek(for userID: UUID) async throws -> [DailyScore] {
+        let calendar = Calendar.current
+        let today = Date()
+        let weekday = calendar.component(.weekday, from: today)  // 1=Sun, 2=Mon...
+        let daysFromMonday = (weekday + 5) % 7                   // Mon=0 ... Sun=6
+        let monday = calendar.date(byAdding: .day, value: -daysFromMonday, to: today)!
+        let sunday = calendar.date(byAdding: .day, value: 6 - daysFromMonday, to: today)!
+
+        return try await supabase
+            .from("daily_scores")
+            .select()
+            .eq("user_id", value: userID)
+            .gte("score_date", value: isoDateString(from: monday))
+            .lte("score_date", value: isoDateString(from: sunday))
+            .execute()
+            .value
+    }
+
     static func fetchHighScore(for userID: UUID) async throws -> Int {
         let results: [DailyScore] = try await supabase
             .from("daily_scores")

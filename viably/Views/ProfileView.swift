@@ -158,6 +158,8 @@ struct ProfileView: View {
                 }
                 .buttonStyle(.plain)
             }
+
+            WeeklyMomentumChart(weekScores: viewModel.weekScores)
         }
     }
 }

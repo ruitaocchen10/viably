@@ -8,6 +8,7 @@ final class ProfileViewModel: ObservableObject {
     @Published var bestStreak: Int = 0
     @Published var highScore: Int = 0
     @Published var friendsCount: Int = 0
+    @Published var weekScores: [DailyScore] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
 
@@ -35,13 +36,15 @@ final class ProfileViewModel: ObservableObject {
             async let fetchedHabits = HabitService.fetchAll(for: userID)
             async let fetchedHigh = DailyScoreService.fetchHighScore(for: userID)
             async let fetchedFriendships = FriendService.fetchFriends(userID: userID)
-            let (fetched, habits, high, friendships) = try await (fetchedProfile, fetchedHabits, fetchedHigh, fetchedFriendships)
+            async let fetchedWeek = DailyScoreService.fetchWeek(for: userID)
+            let (fetched, habits, high, friendships, week) = try await (fetchedProfile, fetchedHabits, fetchedHigh, fetchedFriendships, fetchedWeek)
             profile = fetched
             editUsername = fetched.username
             editDisplayName = fetched.displayName ?? ""
             bestStreak = habits.map(\.currentStreak).max() ?? 0
             highScore = high
             friendsCount = friendships.count
+            weekScores = week
         } catch {
             errorMessage = error.localizedDescription
         }
