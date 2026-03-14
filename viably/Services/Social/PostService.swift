@@ -19,13 +19,13 @@ struct PostService {
             f.requesterID == userID ? f.addresseeID : f.requesterID
         }
 
-        guard !friendIDs.isEmpty else { return [] }
+        let feedIDs = friendIDs + [userID]
 
-        // 2. Fetch posts from friends (most recent 50)
+        // 2. Fetch posts from friends + self (most recent 50)
         var rawPosts: [Post] = try await supabase
             .from("posts")
             .select()
-            .in("user_id", values: friendIDs)
+            .in("user_id", values: feedIDs)
             .order("created_at", ascending: false)
             .limit(50)
             .execute()
