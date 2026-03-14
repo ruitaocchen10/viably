@@ -129,16 +129,16 @@ struct DailyScoreCard: View {
             wasFullScore = isFullScore
             startShimmer()
         }
-        .onChange(of: score) { _ in
+        .onChange(of: score) { _, _ in
             animateScoreBump()
         }
-        .onChange(of: isViableDay) { newValue in
+        .onChange(of: isViableDay) { _, newValue in
             if newValue && !wasViableDay {
                 triggerMVDCelebration()
             }
             wasViableDay = newValue
         }
-        .onChange(of: progressFraction) { newValue in
+        .onChange(of: progressFraction) { _, newValue in
             let newFullScore = newValue >= 1.0 && maxScore > 0
             if newFullScore && !wasFullScore {
                 triggerFullScoreCelebration()

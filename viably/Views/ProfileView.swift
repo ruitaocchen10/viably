@@ -7,7 +7,9 @@ import SwiftUI
 
 struct ProfileView: View {
     @StateObject private var viewModel = ProfileViewModel()
+    @EnvironmentObject var authVM: AuthViewModel
     @State private var showingEdit = false
+    @State private var showingSignOutAlert = false
 
     var body: some View {
         ScrollView {
@@ -28,6 +30,10 @@ struct ProfileView: View {
                     statsRow
                         .padding(.horizontal, 16)
                         .padding(.top, 24)
+                    signOutButton
+                        .padding(.horizontal, 16)
+                        .padding(.top, 32)
+                        .padding(.bottom, 24)
                 }
             }
         }
@@ -77,6 +83,9 @@ struct ProfileView: View {
                         image
                             .resizable()
                             .scaledToFill()
+                    case .failure(let error):
+                        let _ = { print("[Avatar] load failed: \(error)") }()
+                        fallbackAvatar
                     default:
                         fallbackAvatar
                     }
@@ -111,6 +120,24 @@ struct ProfileView: View {
                 .foregroundColor(.dsTextMuted)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    // MARK: - Sign Out
+
+    private var signOutButton: some View {
+        Button(role: .destructive) {
+            showingSignOutAlert = true
+        } label: {
+            Text("Sign Out")
+                .font(.dsSemiBoldSectionLabel)
+                .frame(maxWidth: .infinity)
+        }
+        .alert("Sign Out", isPresented: $showingSignOutAlert) {
+            Button("Sign Out", role: .destructive) { Task { await authVM.signOut() } }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Are you sure you want to sign out?")
+        }
     }
 
     // MARK: - Stats row

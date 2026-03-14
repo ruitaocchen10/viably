@@ -34,6 +34,7 @@ struct ProfileService {
             .from("profiles")
             .update(payload)
             .eq("id", value: profile.id)
+            .select()
             .single()
             .execute()
             .value

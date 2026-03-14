@@ -123,11 +123,11 @@ struct EditProfileView: View {
             .onChange(of: photosItem) { _, item in
                 Task {
                     guard let item,
-                          let data = try? await item.loadTransferable(type: Data.self) else { return }
-                    viewModel.pendingAvatarData = data
-                    if let uiImage = UIImage(data: data) {
-                        previewImage = Image(uiImage: uiImage)
-                    }
+                          let data = try? await item.loadTransferable(type: Data.self),
+                          let uiImage = UIImage(data: data),
+                          let jpegData = uiImage.jpegData(compressionQuality: 0.85) else { return }
+                    viewModel.pendingAvatarData = jpegData
+                    previewImage = Image(uiImage: uiImage)
                 }
             }
         }

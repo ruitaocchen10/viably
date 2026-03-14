@@ -50,7 +50,8 @@ final class ProfileViewModel: ObservableObject {
             .from("avatars")
             .upload(path, data: data, options: FileOptions(contentType: "image/jpeg", upsert: true))
         let url = try supabase.storage.from("avatars").getPublicURL(path: path)
-        return url.absoluteString
+        let cacheBusted = url.absoluteString + "?t=\(Int(Date().timeIntervalSince1970))"
+        return cacheBusted
     }
 
     func save() async {
