@@ -16,10 +16,10 @@ struct SocialFeedView: View {
                         // Header
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Friend Feed")
-                                .font(.dsXBoldHeading)
+                                .font(.dsXBoldTitle)
                                 .foregroundColor(.dsTextPrimary)
                             Text("See how your crew is doing")
-                                .font(.dsSemiBoldCaption)
+                                .font(.dsSemiBoldLabel)
                                 .foregroundColor(.dsTextMuted)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)

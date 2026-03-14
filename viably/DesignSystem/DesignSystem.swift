@@ -48,6 +48,7 @@ extension Font {
     static let dsXBoldTitle = Font.custom("Syne-ExtraBold", size: 24)
     static let dsXBoldSubtitle = Font.custom("Syne-ExtraBold", size: 20)
 
+    static let dsBoldTitle = Font.custom("Syne-Bold", size: 24)
     static let dsBoldSubtitle = Font.custom("Syne-Bold", size: 20)
     static let dsBoldSectionLabel = Font.custom("Syne-Bold", size: 16)
 
