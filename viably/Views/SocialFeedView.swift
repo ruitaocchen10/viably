@@ -15,7 +15,7 @@ struct SocialFeedView: View {
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         // Header
-                        HStack {
+                        HStack(alignment: .top) {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Friend Feed")
                                     .font(.dsXBoldTitle)

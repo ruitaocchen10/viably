@@ -10,6 +10,7 @@ struct ProfileView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @State private var showingEdit = false
     @State private var showingSignOutAlert = false
+    @State private var showingFriends = false
 
     var body: some View {
         ScrollView {
@@ -49,6 +50,9 @@ struct ProfileView: View {
         }
         .sheet(isPresented: $showingEdit) {
             EditProfileView(viewModel: viewModel)
+        }
+        .sheet(isPresented: $showingFriends) {
+            FriendManagementView()
         }
     }
 
@@ -149,7 +153,10 @@ struct ProfileView: View {
             HStack(spacing: 12) {
                 StatCard(label: "Best Streak", value: viewModel.bestStreak, color: .dsAccentOrange, emoji: "🔥")
                 StatCard(label: "High Score",  value: viewModel.highScore, color: .dsAccentLime)
-                StatCard(label: "Friends",     value: 0, color: .dsAccentPurple)
+                Button { showingFriends = true } label: {
+                    StatCard(label: "Friends", value: viewModel.friendsCount, color: .dsAccentPurple)
+                }
+                .buttonStyle(.plain)
             }
         }
     }

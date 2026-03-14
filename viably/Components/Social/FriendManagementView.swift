@@ -32,6 +32,36 @@ struct FriendManagementView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
+                        // Your Friends section
+                        if !viewModel.friends.isEmpty {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Your Friends")
+                                    .font(.dsBoldSubtitle)
+                                    .foregroundColor(.dsTextPrimary)
+                                    .padding(.horizontal, 16)
+
+                                VStack(spacing: 0) {
+                                    ForEach(viewModel.friends) { profile in
+                                        FriendRow(profile: profile) {
+                                            Task { await viewModel.removeFriend(profile) }
+                                        }
+                                        if profile.id != viewModel.friends.last?.id {
+                                            Divider()
+                                                .background(Color.dsBorder)
+                                                .padding(.horizontal, 16)
+                                        }
+                                    }
+                                }
+                                .background(Color.dsSurface)
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.dsBorder, lineWidth: 1)
+                                )
+                                .padding(.horizontal, 16)
+                            }
+                        }
+
                         // Add a Friend section
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Add a Friend")
@@ -100,7 +130,10 @@ struct FriendManagementView: View {
 
                                 VStack(spacing: 0) {
                                     ForEach(viewModel.pendingRequests) { friendship in
-                                        PendingRequestRow(friendship: friendship) {
+                                        PendingRequestRow(
+                                            friendship: friendship,
+                                            profile: viewModel.requesterProfiles[friendship.requesterID]
+                                        ) {
                                             Task { await viewModel.acceptRequest(friendship) }
                                         } onDecline: {
                                             Task { await viewModel.declineRequest(friendship) }
@@ -137,7 +170,11 @@ struct FriendManagementView: View {
                 }
             }
         }
-        .task { await viewModel.loadPendingRequests() }
+        .task {
+            async let friends: () = viewModel.loadFriends()
+            async let pending: () = viewModel.loadPendingRequests()
+            _ = await (friends, pending)
+        }
         .onChange(of: viewModel.searchText) { _, newValue in
             Task {
                 try? await Task.sleep(for: .milliseconds(300))
@@ -145,6 +182,55 @@ struct FriendManagementView: View {
                 await viewModel.searchUsers()
             }
         }
+    }
+}
+
+// MARK: - Friend Row
+
+private struct FriendRow: View {
+    let profile: Profile
+    let onRemove: () -> Void
+    @State private var showingConfirmation = false
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ProfileAvatar(avatarURL: profile.avatarURL, size: 40)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(profile.displayName ?? profile.username)
+                    .font(.dsSemiBoldLabel)
+                    .foregroundColor(.dsTextPrimary)
+                Text("@\(profile.username)")
+                    .font(.dsCaption)
+                    .foregroundColor(.dsTextMuted)
+            }
+
+            Spacer()
+
+            Button {
+                showingConfirmation = true
+            } label: {
+                Text("Remove")
+                    .font(.dsSemiBoldCaption)
+                    .foregroundColor(.dsAccentOrange)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 7)
+                    .background(Color.dsSurface)
+                    .cornerRadius(20)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color.dsAccentOrange.opacity(0.4), lineWidth: 1)
+                    )
+            }
+            .alert("Remove \(profile.displayName ?? profile.username)?", isPresented: $showingConfirmation) {
+                Button("Remove", role: .destructive) { onRemove() }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("They won't be able to see your posts.")
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
     }
 }
 
@@ -194,20 +280,27 @@ private struct SearchResultRow: View {
 
 private struct PendingRequestRow: View {
     let friendship: Friendship
+    let profile: Profile?
     let onAccept: () -> Void
     let onDecline: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
-            ProfileAvatar(avatarURL: nil, size: 40)
+            ProfileAvatar(avatarURL: profile?.avatarURL, size: 40)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("User \(friendship.requesterID.uuidString.prefix(8))")
+                Text(profile.map { $0.displayName ?? $0.username } ?? "Loading...")
                     .font(.dsSemiBoldLabel)
                     .foregroundColor(.dsTextPrimary)
-                Text("Wants to be friends")
-                    .font(.dsCaption)
-                    .foregroundColor(.dsTextMuted)
+                if let profile {
+                    Text("@\(profile.username)")
+                        .font(.dsCaption)
+                        .foregroundColor(.dsTextMuted)
+                } else {
+                    Text("Wants to be friends")
+                        .font(.dsCaption)
+                        .foregroundColor(.dsTextMuted)
+                }
             }
 
             Spacer()
