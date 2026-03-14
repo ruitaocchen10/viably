@@ -7,6 +7,7 @@ final class HomeViewModel: ObservableObject {
     @Published var habits: [Habit] = []
     @Published var completedHabitIDs: Set<UUID> = []
     @Published var todayScore: DailyScore? = nil
+    @Published var profile: Profile? = nil
     @Published var isLoading = false
     @Published var errorMessage: String? = nil
 
@@ -30,6 +31,9 @@ final class HomeViewModel: ObservableObject {
         }
     }
     var userName: String {
+        if let name = profile?.displayName ?? profile?.username, !name.isEmpty {
+            return name
+        }
         if case .string(let name) = supabase.auth.currentUser?.userMetadata["full_name"] {
             return name.components(separatedBy: " ").first ?? name
         }
@@ -54,12 +58,14 @@ final class HomeViewModel: ObservableObject {
             async let habitsResult = HabitService.fetchActive(for: userID)
             async let completionsResult = HabitCompletionService.fetchCompletions(for: userID, on: .now)
             async let scoreResult = DailyScoreService.fetchToday(for: userID)
+            async let profileResult = ProfileService.fetch(id: userID)
 
-            let (fetchedHabits, fetchedCompletions, fetchedScore) = try await (habitsResult, completionsResult, scoreResult)
+            let (fetchedHabits, fetchedCompletions, fetchedScore, fetchedProfile) = try await (habitsResult, completionsResult, scoreResult, profileResult)
 
             habits = fetchedHabits
             completedHabitIDs = Set(fetchedCompletions.map { $0.habitID })
             todayScore = fetchedScore
+            profile = fetchedProfile
 
             let (computedScore, computedMax, computedViable) = recalculateScore()
             try await DailyScoreService.upsertToday(

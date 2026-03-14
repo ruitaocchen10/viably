@@ -17,7 +17,7 @@ struct AuthView: View {
 
                 // Logo / wordmark
                 VStack(spacing: 8) {
-                    Text("viably")
+                    Text("viablyy")
                         .font(.dsXBoldHeading)
                         .foregroundColor(.dsAccentLime)
 
