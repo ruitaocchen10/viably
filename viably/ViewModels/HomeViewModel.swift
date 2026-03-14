@@ -20,6 +20,15 @@ final class HomeViewModel: ObservableObject {
     var mvdHabitsRemaining: Int {
         habits.filter { $0.isMVD && !completedHabitIDs.contains($0.id) }.count
     }
+    var sortedHabits: [Habit] {
+        habits.sorted { a, b in
+            let aCompleted = completedHabitIDs.contains(a.id)
+            let bCompleted = completedHabitIDs.contains(b.id)
+            if aCompleted != bCompleted { return !aCompleted }
+            if a.isMVD != b.isMVD { return a.isMVD }
+            return a.currentStreak > b.currentStreak
+        }
+    }
     var userName: String {
         if case .string(let name) = supabase.auth.currentUser?.userMetadata["full_name"] {
             return name.components(separatedBy: " ").first ?? name

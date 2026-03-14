@@ -123,7 +123,7 @@ struct HomeView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 24)
                             } else {
-                                ForEach(Array(viewModel.habits.enumerated()), id: \.element.id) { index, habit in
+                                ForEach(Array(viewModel.sortedHabits.enumerated()), id: \.element.id) { index, habit in
                                     HabitRow(
                                         habit: habit,
                                         isCompleted: viewModel.completedHabitIDs.contains(habit.id),

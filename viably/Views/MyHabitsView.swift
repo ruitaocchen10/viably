@@ -185,6 +185,7 @@ private struct HabitSection: View {
                         Divider()
                             .background(Color.dsBorder)
                             .padding(.leading, 20)
+                            .padding(.trailing, 20)
                     }
                 }
             }

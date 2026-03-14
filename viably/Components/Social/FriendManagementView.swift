@@ -84,8 +84,8 @@ struct FriendManagementView: View {
                                         .scaleEffect(0.8)
                                 }
                             }
+                            .frame(height: 48)
                             .padding(.horizontal, 14)
-                            .padding(.vertical, 12)
                             .background(Color.dsSurface)
                             .cornerRadius(12)
                             .overlay(
