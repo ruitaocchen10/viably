@@ -133,9 +133,12 @@ struct ProfileView: View {
             showingSignOutAlert = true
         } label: {
             Text("Sign Out")
-                .font(.dsSemiBoldSectionLabel)
+                .font(.dsBoldSectionLabel)
                 .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
         }
+        .buttonStyle(.borderedProminent)
+        .tint(.red)
         .alert("Sign Out", isPresented: $showingSignOutAlert) {
             Button("Sign Out", role: .destructive) { Task { await authVM.signOut() } }
             Button("Cancel", role: .cancel) {}
