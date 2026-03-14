@@ -33,10 +33,23 @@ struct HabitService {
             .value
     }
 
-    static func setActive(habitID: UUID, isActive: Bool) async throws {
+    static func setActive(habitID: UUID, isActive: Bool, pausedAt: Date?) async throws {
+        struct Payload: Encodable {
+            let isActive: Bool
+            let pausedAt: Date?
+            enum CodingKeys: String, CodingKey {
+                case isActive = "is_active"
+                case pausedAt = "paused_at"
+            }
+            func encode(to encoder: Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                try container.encode(isActive, forKey: .isActive)
+                try container.encode(pausedAt, forKey: .pausedAt) // sends null, not omitted
+            }
+        }
         try await supabase
             .from("habits")
-            .update(["is_active": isActive])
+            .update(Payload(isActive: isActive, pausedAt: pausedAt))
             .eq("id", value: habitID)
             .execute()
     }

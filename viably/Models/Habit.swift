@@ -8,6 +8,7 @@ struct Habit: Codable, Identifiable {
     var description: String?
     var isMVD: Bool
     var isActive: Bool
+    var pausedAt: Date?
     var currentStreak: Int
     let createdAt: Date
 
@@ -16,6 +17,7 @@ struct Habit: Codable, Identifiable {
         case userID = "user_id"
         case isMVD = "is_mvd"
         case isActive = "is_active"
+        case pausedAt = "paused_at"
         case currentStreak = "current_streak"
         case createdAt = "created_at"
     }

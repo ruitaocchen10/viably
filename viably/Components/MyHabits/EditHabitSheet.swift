@@ -12,6 +12,7 @@ struct EditHabitSheet: View {
     @State private var description: String
     @State private var selectedIcon: String?
     @State private var isMVD: Bool
+    @State private var isActive: Bool
     @State private var isSaving = false
 
     @FocusState private var isNameFocused: Bool
@@ -24,6 +25,7 @@ struct EditHabitSheet: View {
         _description = State(initialValue: habit.description ?? "")
         _selectedIcon = State(initialValue: habit.icon)
         _isMVD = State(initialValue: habit.isMVD)
+        _isActive = State(initialValue: habit.isActive)
     }
 
     private var canSave: Bool { !name.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -72,22 +74,41 @@ struct EditHabitSheet: View {
 
                         // Options
                         fieldSection(label: "Options") {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Minimum Viable Day")
-                                        .font(.dsSemiBoldSectionLabel)
-                                        .foregroundColor(.dsAccentPurple)
-                                    Text("This habit must be done for a viable day")
-                                        .font(.dsCaption)
-                                        .foregroundColor(.dsTextMuted)
+                            VStack(spacing: 0) {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Minimum Viable Day")
+                                            .font(.dsSemiBoldSectionLabel)
+                                            .foregroundColor(.dsAccentPurple)
+                                        Text("This habit must be done for a viable day")
+                                            .font(.dsCaption)
+                                            .foregroundColor(.dsTextMuted)
+                                    }
+                                    Spacer()
+                                    Toggle("", isOn: $isMVD)
+                                        .tint(.dsAccentPurple)
+                                        .labelsHidden()
                                 }
-                                Spacer()
-                                Toggle("", isOn: $isMVD)
-                                    .tint(.dsAccentPurple)
-                                    .labelsHidden()
+                                .padding(14)
+                                .background(Color.dsSurface)
+                                Divider().background(Color.dsBorder)
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Active")
+                                            .font(.dsSemiBoldSectionLabel)
+                                            .foregroundColor(.dsTextPrimary)
+                                        Text("Pause this habit to hide it from your daily view")
+                                            .font(.dsCaption)
+                                            .foregroundColor(.dsTextMuted)
+                                    }
+                                    Spacer()
+                                    Toggle("", isOn: $isActive)
+                                        .tint(.dsAccentLime)
+                                        .labelsHidden()
+                                }
+                                .padding(14)
+                                .background(Color.dsSurface)
                             }
-                            .padding(14)
-                            .background(Color.dsSurface)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
 
@@ -171,6 +192,9 @@ struct EditHabitSheet: View {
             description: trimmedDescription.isEmpty ? nil : trimmedDescription,
             isMVD: isMVD
         )
+        if isActive != habit.isActive {
+            await vm.setActive(id: habit.id, isActive: isActive)
+        }
         isSaving = false
         dismiss()
     }

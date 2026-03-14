@@ -52,6 +52,33 @@ final class MyHabitsViewModel: ObservableObject {
         }
     }
 
+    func setActive(id: UUID, isActive: Bool) async {
+        do {
+            if isActive {
+                let pausedAt = habits.first(where: { $0.id == id })?.pausedAt
+                let sameDay = pausedAt.map { Calendar.current.isDateInToday($0) } ?? true
+                try await HabitService.setActive(habitID: id, isActive: true, pausedAt: nil)
+                if !sameDay {
+                    try await HabitService.updateStreak(habitID: id, newStreak: 0)
+                }
+                if let idx = habits.firstIndex(where: { $0.id == id }) {
+                    habits[idx].isActive = true
+                    habits[idx].pausedAt = nil
+                    if !sameDay { habits[idx].currentStreak = 0 }
+                }
+            } else {
+                let now = Date.now
+                try await HabitService.setActive(habitID: id, isActive: false, pausedAt: now)
+                if let idx = habits.firstIndex(where: { $0.id == id }) {
+                    habits[idx].isActive = false
+                    habits[idx].pausedAt = now
+                }
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
     func createHabit(name: String, icon: String?, description: String? = nil, isMVD: Bool) async {
         let habit = Habit(
             id: UUID(),
