@@ -4,12 +4,14 @@
 //
 
 import SwiftUI
+import Supabase
 
 struct HomeView: View {
     @Binding var selectedTab: Int
     @StateObject private var viewModel = HomeViewModel()
     @StateObject private var profileVM = ProfileViewModel()
     @AppStorage("hasSeenHoldCoachMark") private var hasSeenCoachMark = false
+    @State private var showComposer = false
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: .now)
@@ -66,6 +68,27 @@ struct HomeView: View {
                             progressFraction: viewModel.progressFraction,
                             mvdHabitsRemaining: viewModel.mvdHabitsRemaining
                         )
+
+                        // Share Day
+                        Button {
+                            showComposer = true
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "square.and.arrow.up")
+                                    .font(.system(size: 14, weight: .semibold))
+                                Text("Share Day")
+                                    .font(.dsBoldSectionLabel)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color.dsSurface)
+                            .foregroundColor(.dsAccentLime)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.dsAccentLime.opacity(0.4), lineWidth: 1)
+                            )
+                        }
 
                         // Habits section
                         VStack(alignment: .leading, spacing: 12) {
@@ -147,6 +170,18 @@ struct HomeView: View {
             }
         }
         .task { await viewModel.loadAll() }
+        .sheet(isPresented: $showComposer) {
+            if let userID = supabase.auth.currentUser?.id {
+                PostComposerView(
+                    userID: userID,
+                    score: viewModel.scoreValue,
+                    completedHabits: viewModel.habits.filter { viewModel.completedHabitIDs.contains($0.id) },
+                    isPresented: $showComposer
+                )
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+            }
+        }
     }
 }
 
