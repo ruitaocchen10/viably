@@ -23,6 +23,7 @@ struct ReplyService {
         return try await supabase
             .from("replies")
             .insert(Payload(post_id: postID, user_id: userID, content: content))
+            .select()
             .single()
             .execute()
             .value

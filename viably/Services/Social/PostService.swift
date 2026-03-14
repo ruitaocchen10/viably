@@ -73,13 +73,26 @@ struct PostService {
             }
         }
 
-        // 6. Enrich posts with joined data
+        // 6. Fetch reply counts
+        let replyRecords: [ReplyCountRecord] = (try? await supabase
+            .from("replies")
+            .select("post_id")
+            .in("post_id", values: postIDs)
+            .execute()
+            .value) ?? []
+        var replyCountByPostID: [UUID: Int] = [:]
+        for record in replyRecords {
+            replyCountByPostID[record.postID, default: 0] += 1
+        }
+
+        // 7. Enrich posts with joined data
         for i in rawPosts.indices {
             let post = rawPosts[i]
             rawPosts[i].profile = profileByID[post.userID]
             rawPosts[i].completedHabits = habitsByPostID[post.id] ?? []
             rawPosts[i].hypeCount = hypeCountByPostID[post.id] ?? 0
             rawPosts[i].didHype = myHypedPostIDs.contains(post.id)
+            rawPosts[i].replyCount = replyCountByPostID[post.id] ?? 0
         }
 
         return rawPosts
@@ -181,7 +194,7 @@ struct PostService {
     }
 }
 
-// MARK: - Internal type for hype decoding
+// MARK: - Internal types for decoding
 
 struct HypeRecord: Codable {
     let postID: UUID
@@ -190,5 +203,13 @@ struct HypeRecord: Codable {
     enum CodingKeys: String, CodingKey {
         case postID = "post_id"
         case userID = "user_id"
+    }
+}
+
+struct ReplyCountRecord: Codable {
+    let postID: UUID
+
+    enum CodingKeys: String, CodingKey {
+        case postID = "post_id"
     }
 }

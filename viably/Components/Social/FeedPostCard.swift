@@ -3,6 +3,7 @@ import SwiftUI
 struct FeedPostCard: View {
     let post: Post
     let onHype: () -> Void
+    let onReply: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -80,11 +81,11 @@ struct FeedPostCard: View {
                     .cornerRadius(20)
                 }
 
-                Button(action: {}) {
+                Button(action: onReply) {
                     HStack(spacing: 6) {
                         Image(systemName: "bubble.left")
                             .font(.system(size: 14, weight: .semibold))
-                        Text("Reply")
+                        Text("Reply \(post.replyCount)")
                             .font(.dsSemiBoldCaption)
                     }
                     .foregroundColor(.dsTextMuted)
@@ -109,7 +110,7 @@ struct FeedPostCard: View {
 
 // MARK: - Avatar helper
 
-private struct AvatarView: View {
+struct AvatarView: View {
     let avatarURL: String?
     let size: CGFloat
 

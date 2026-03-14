@@ -23,6 +23,10 @@ final class SocialFeedViewModel: ObservableObject {
         defer { isLoading = false }
         do {
             posts = try await PostService.fetchFeed(for: userID)
+        } catch is CancellationError {
+            // Task was cancelled by refreshable — not an error
+        } catch let urlError as URLError where urlError.code == .cancelled {
+            // URLSession cancelled the in-flight request — not an error
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -30,6 +34,11 @@ final class SocialFeedViewModel: ObservableObject {
 
     func refresh() async {
         await loadFeed()
+    }
+
+    func incrementReplyCount(for postID: UUID) {
+        guard let idx = posts.firstIndex(where: { $0.id == postID }) else { return }
+        posts[idx].replyCount += 1
     }
 
     func toggleHype(post: Post) async {

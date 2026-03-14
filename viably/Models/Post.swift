@@ -13,6 +13,7 @@ struct Post: Codable, Identifiable {
     var completedHabits: [PostCompletedHabit] = []
     var hypeCount: Int = 0
     var didHype: Bool = false
+    var replyCount: Int = 0
 
     enum CodingKeys: String, CodingKey {
         case id

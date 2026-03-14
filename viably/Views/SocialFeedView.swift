@@ -3,6 +3,7 @@ import SwiftUI
 struct SocialFeedView: View {
     @StateObject private var viewModel = SocialFeedViewModel()
     @State private var showFriendManagement = false
+    @State private var replyingToPost: Post? = nil
 
     var body: some View {
         ZStack {
@@ -44,9 +45,11 @@ struct SocialFeedView: View {
                             emptyState
                         } else {
                             ForEach(viewModel.posts) { post in
-                                FeedPostCard(post: post) {
-                                    Task { await viewModel.toggleHype(post: post) }
-                                }
+                                FeedPostCard(
+                                    post: post,
+                                    onHype: { Task { await viewModel.toggleHype(post: post) } },
+                                    onReply: { replyingToPost = post }
+                                )
                                 .padding(.horizontal, 16)
                                 .padding(.bottom, 12)
                             }
@@ -72,6 +75,11 @@ struct SocialFeedView: View {
         .task { await viewModel.loadFeed() }
         .sheet(isPresented: $showFriendManagement) {
             FriendManagementView()
+        }
+        .sheet(item: $replyingToPost) { post in
+            PostRepliesView(post: post) {
+                viewModel.incrementReplyCount(for: post.id)
+            }
         }
     }
 
