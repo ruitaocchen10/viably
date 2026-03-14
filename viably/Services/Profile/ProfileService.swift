@@ -24,6 +24,16 @@ struct ProfileService {
         }
     }
 
+    static func search(username: String) async throws -> [Profile] {
+        try await supabase
+            .from("profiles")
+            .select()
+            .ilike("username", value: "%\(username)%")
+            .limit(10)
+            .execute()
+            .value
+    }
+
     static func update(_ profile: Profile) async throws -> Profile {
         let payload = ProfileUpdate(
             username: profile.username,

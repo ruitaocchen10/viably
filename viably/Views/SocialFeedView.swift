@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SocialFeedView: View {
     @StateObject private var viewModel = SocialFeedViewModel()
+    @State private var showFriendManagement = false
 
     var body: some View {
         ZStack {
@@ -14,15 +15,27 @@ struct SocialFeedView: View {
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         // Header
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Friend Feed")
-                                .font(.dsXBoldTitle)
-                                .foregroundColor(.dsTextPrimary)
-                            Text("See how your crew is doing")
-                                .font(.dsSemiBoldLabel)
-                                .foregroundColor(.dsTextMuted)
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Friend Feed")
+                                    .font(.dsXBoldTitle)
+                                    .foregroundColor(.dsTextPrimary)
+                                Text("See how your crew is doing")
+                                    .font(.dsSemiBoldLabel)
+                                    .foregroundColor(.dsTextMuted)
+                            }
+                            Spacer()
+                            Button { showFriendManagement = true } label: {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.dsAccentLime)
+                                        .frame(width: 32, height: 32)
+                                    Image(systemName: "person.badge.plus")
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundColor(.dsBackground)
+                                }
+                            }
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 16)
                         .padding(.top, 24)
                         .padding(.bottom, 16)
@@ -57,6 +70,9 @@ struct SocialFeedView: View {
             }
         }
         .task { await viewModel.loadFeed() }
+        .sheet(isPresented: $showFriendManagement) {
+            FriendManagementView()
+        }
     }
 
     private var emptyState: some View {
