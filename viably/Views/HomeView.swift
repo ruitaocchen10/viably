@@ -9,7 +9,6 @@ import Supabase
 struct HomeView: View {
     @Binding var selectedTab: Int
     @StateObject private var viewModel = HomeViewModel()
-    @StateObject private var profileVM = ProfileViewModel()
     @AppStorage("hasSeenHoldCoachMark") private var hasSeenCoachMark = false
     @State private var showComposer = false
 
@@ -42,20 +41,7 @@ struct HomeView: View {
                                 .foregroundColor(.dsTextPrimary)
                             Spacer()
                             Button { selectedTab = 3 } label: {
-                                Group {
-                                    if let urlString = profileVM.profile?.avatarURL,
-                                       let url = URL(string: urlString) {
-                                        AsyncImage(url: url) { image in
-                                            image.resizable().scaledToFill()
-                                        } placeholder: {
-                                            Color.dsSurface
-                                        }
-                                    } else {
-                                        Color.dsSurface
-                                    }
-                                }
-                                .frame(width: 44, height: 44)
-                                .clipShape(Circle())
+                                AvatarView(avatarURL: viewModel.profile?.avatarURL, size: 44)
                             }
                         }
 

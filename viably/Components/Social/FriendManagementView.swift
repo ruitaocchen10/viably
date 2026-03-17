@@ -194,7 +194,7 @@ private struct FriendRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            ProfileAvatar(avatarURL: profile.avatarURL, size: 40)
+            AvatarView(avatarURL: profile.avatarURL, size: 40)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(profile.displayName ?? profile.username)
@@ -243,7 +243,7 @@ private struct SearchResultRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            ProfileAvatar(avatarURL: profile.avatarURL, size: 40)
+            AvatarView(avatarURL: profile.avatarURL, size: 40)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(profile.displayName ?? profile.username)
@@ -286,7 +286,7 @@ private struct PendingRequestRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            ProfileAvatar(avatarURL: profile?.avatarURL, size: 40)
+            AvatarView(avatarURL: profile?.avatarURL, size: 40)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(profile.map { $0.displayName ?? $0.username } ?? "Loading...")
@@ -331,30 +331,3 @@ private struct PendingRequestRow: View {
     }
 }
 
-// MARK: - Profile Avatar
-
-private struct ProfileAvatar: View {
-    let avatarURL: String?
-    let size: CGFloat
-
-    var body: some View {
-        Group {
-            if let urlString = avatarURL, let url = URL(string: urlString) {
-                AsyncImage(url: url) { image in
-                    image.resizable().scaledToFill()
-                } placeholder: {
-                    Color.dsIconBackground
-                }
-            } else {
-                Color.dsIconBackground
-                    .overlay(
-                        Image(systemName: "person.fill")
-                            .foregroundColor(.dsTextMuted)
-                            .font(.system(size: size * 0.45))
-                    )
-            }
-        }
-        .frame(width: size, height: size)
-        .clipShape(Circle())
-    }
-}

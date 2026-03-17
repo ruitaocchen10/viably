@@ -78,38 +78,7 @@ struct ProfileView: View {
     // MARK: - Avatar
 
     private var avatar: some View {
-        Group {
-            if let urlString = viewModel.profile?.avatarURL,
-               let url = URL(string: urlString) {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    case .failure(let error):
-                        let _ = { print("[Avatar] load failed: \(error)") }()
-                        fallbackAvatar
-                    default:
-                        fallbackAvatar
-                    }
-                }
-            } else {
-                fallbackAvatar
-            }
-        }
-        .frame(width: 88, height: 88)
-        .clipShape(Circle())
-        .overlay(Circle().stroke(Color.dsBackground, lineWidth: 3))
-    }
-
-    private var fallbackAvatar: some View {
-        ZStack {
-            Circle().fill(Color.dsSurface)
-            Image(systemName: "person.fill")
-                .font(.system(size: 36))
-                .foregroundColor(.dsTextMuted)
-        }
+        AvatarView(avatarURL: viewModel.profile?.avatarURL, size: 88, borderColor: .dsBackground)
     }
 
     // MARK: - Profile info

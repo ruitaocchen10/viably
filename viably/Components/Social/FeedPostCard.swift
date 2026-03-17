@@ -108,34 +108,6 @@ struct FeedPostCard: View {
     }
 }
 
-// MARK: - Avatar helper
-
-struct AvatarView: View {
-    let avatarURL: String?
-    let size: CGFloat
-
-    var body: some View {
-        Group {
-            if let urlString = avatarURL, let url = URL(string: urlString) {
-                AsyncImage(url: url) { image in
-                    image.resizable().scaledToFill()
-                } placeholder: {
-                    Color.dsIconBackground
-                }
-            } else {
-                Color.dsIconBackground
-                    .overlay(
-                        Image(systemName: "person.fill")
-                            .foregroundColor(.dsTextMuted)
-                            .font(.system(size: size * 0.45))
-                    )
-            }
-        }
-        .frame(width: size, height: size)
-        .clipShape(Circle())
-    }
-}
-
 // MARK: - Flow layout for wrapping habit pills
 
 struct FlowLayout: Layout {
