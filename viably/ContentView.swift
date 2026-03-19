@@ -10,10 +10,12 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @State private var selectedTab = 0
+    @StateObject private var homeVM = HomeViewModel()
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            HomeView(selectedTab: $selectedTab)
+            HomeView(selectedTab: $selectedTab, viewModel: homeVM)
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
@@ -42,6 +44,11 @@ struct ContentView: View {
             .tag(3)
         }
         .tint(.dsAccentLime)
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                Task { await homeVM.loadAll() }
+            }
+        }
     }
 }
 

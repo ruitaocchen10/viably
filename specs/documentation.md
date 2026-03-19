@@ -105,4 +105,6 @@ Debugging Profile Photos
 - I should be able to create a single component that can display the avatar based on the URL that's passed through depending on the page it's on. This should be a cleaner solution that gives consistency in the way the avatar looks and is loaded in every page.
 - Note: when a profile is updated, the view will only show that update when the information is reloaded. For example, on the HomeView profile information is only loaded when opening the app for the first time, so that will only change when you exit the app and come back... for now.
 
-Debugging Replies
+  3.18.2026
+
+Debugging Habits -

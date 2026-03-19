@@ -8,7 +8,7 @@ import Supabase
 
 struct HomeView: View {
     @Binding var selectedTab: Int
-    @StateObject private var viewModel = HomeViewModel()
+    @ObservedObject var viewModel: HomeViewModel
     @AppStorage("hasSeenHoldCoachMark") private var hasSeenCoachMark = false
     @State private var showComposer = false
 
@@ -155,7 +155,6 @@ struct HomeView: View {
                 }
             }
         }
-        .task { await viewModel.loadAll() }
         .sheet(isPresented: $showComposer) {
             if let userID = supabase.auth.currentUser?.id {
                 PostComposerView(
@@ -172,5 +171,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView(selectedTab: .constant(0))
+    HomeView(selectedTab: .constant(0), viewModel: HomeViewModel())
 }

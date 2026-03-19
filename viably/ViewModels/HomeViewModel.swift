@@ -47,7 +47,6 @@ final class HomeViewModel: ObservableObject {
             preconditionFailure("ViewModel initialized without authenticated user")
         }
         self.userID = id
-        Task { await loadAll() }
     }
 
     func loadAll() async {
@@ -66,6 +65,8 @@ final class HomeViewModel: ObservableObject {
             completedHabitIDs = Set(fetchedCompletions.map { $0.habitID })
             todayScore = fetchedScore
             profile = fetchedProfile
+
+            try await resetStaleStreaks()
 
             let (computedScore, computedMax, computedViable) = recalculateScore()
             try await DailyScoreService.upsertToday(
@@ -154,6 +155,22 @@ final class HomeViewModel: ObservableObject {
     }
 
     // MARK: - Private
+
+    private func resetStaleStreaks() async throws {
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: .now)!
+        let yesterdayCompletions = try await HabitCompletionService.fetchCompletions(for: userID, on: yesterday)
+        let completedYesterdayIDs = Set(yesterdayCompletions.map { $0.habitID })
+
+        for index in habits.indices {
+            let habit = habits[index]
+            guard habit.currentStreak > 0 else { continue }
+            guard !completedHabitIDs.contains(habit.id) else { continue }
+            guard !completedYesterdayIDs.contains(habit.id) else { continue }
+
+            habits[index].currentStreak = 0
+            try await HabitService.updateStreak(habitID: habit.id, newStreak: 0)
+        }
+    }
 
     private func computeNewStreak(for habit: Habit, completing: Bool) async throws -> Int {
         if completing {
