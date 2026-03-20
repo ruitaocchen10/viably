@@ -14,43 +14,39 @@ struct MyHabitsView: View {
         ZStack {
             Color.dsBackground.ignoresSafeArea()
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    // Header
-                    HStack {
-                        Text("My Habits")
-                            .font(.dsXBoldTitle)
-                            .foregroundColor(.dsTextPrimary)
-                        Spacer()
-                        Button {
-                            showNewHabitSheet = true
-                        } label: {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.dsAccentLime)
-                                    .frame(width: 32, height: 32)
-                                Image(systemName: "plus")
-                                    .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(.dsBackground)
+            if vm.isLoading {
+                AppLoadingView()
+            } else {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        // Header
+                        HStack {
+                            Text("My Habits")
+                                .font(.dsXBoldTitle)
+                                .foregroundColor(.dsTextPrimary)
+                            Spacer()
+                            Button {
+                                showNewHabitSheet = true
+                            } label: {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.dsAccentLime)
+                                        .frame(width: 32, height: 32)
+                                    Image(systemName: "plus")
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundColor(.dsBackground)
+                                }
                             }
                         }
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
-                    .padding(.bottom, 24)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 16)
+                        .padding(.bottom, 24)
 
-                    if vm.isLoading {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                                .tint(.dsAccentLime)
-                            Spacer()
+                        if vm.habits.isEmpty {
+                            emptyState
+                        } else {
+                            habitSections
                         }
-                        .padding(.top, 60)
-                    } else if vm.habits.isEmpty {
-                        emptyState
-                    } else {
-                        habitSections
                     }
                 }
             }

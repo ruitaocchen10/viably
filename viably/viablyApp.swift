@@ -16,9 +16,9 @@ struct viablyApp: App {
         WindowGroup {
             Group {
                 if authVM.isCheckingSession {
-                    Color.clear
-                } else if authVM.isAuthenticated {
-                    ContentView()
+                    AppLoadingView()
+                } else if authVM.isAuthenticated, let userID = authVM.currentUserID {
+                    ContentView(userID: userID)
                         .environmentObject(authVM)
                 } else {
                     AuthView()

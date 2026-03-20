@@ -10,8 +10,12 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @State private var selectedTab = 0
-    @StateObject private var homeVM = HomeViewModel()
+    @StateObject private var homeVM: HomeViewModel
     @Environment(\.scenePhase) private var scenePhase
+
+    init(userID: UUID) {
+        _homeVM = StateObject(wrappedValue: HomeViewModel(userID: userID))
+    }
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -54,6 +58,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(userID: UUID())
         .environmentObject(AuthViewModel())
 }

@@ -10,8 +10,7 @@ struct SocialFeedView: View {
             Color.dsBackground.ignoresSafeArea()
 
             if viewModel.isLoading && viewModel.posts.isEmpty {
-                ProgressView()
-                    .tint(.dsAccentLime)
+                AppLoadingView()
             } else {
                 ScrollView {
                     LazyVStack(spacing: 0) {

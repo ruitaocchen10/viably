@@ -46,6 +46,14 @@ struct AuthView: View {
                         Task { await authVM.signInWithGoogle() }
                     }
 
+                    AuthButton(
+                        label: "Sign in with Apple",
+                        icon: "apple.logo",
+                        isLoading: authVM.isLoading
+                    ) {
+                        Task { await authVM.signInWithApple() }
+                    }
+
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 48)

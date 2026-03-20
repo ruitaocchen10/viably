@@ -12,6 +12,12 @@ struct AuthService {
         }
     }
 
+    static func signInWithApple(idToken: String, nonce: String) async throws {
+        try await supabase.auth.signInWithIdToken(
+            credentials: .init(provider: .apple, idToken: idToken, nonce: nonce)
+        )
+    }
+
     static func signOut() async throws {
         try await supabase.auth.signOut()
     }

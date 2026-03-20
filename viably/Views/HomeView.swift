@@ -28,9 +28,8 @@ struct HomeView: View {
         ZStack {
             Color.dsBackground.ignoresSafeArea()
 
-            if viewModel.isLoading && viewModel.habits.isEmpty {
-                ProgressView()
-                    .tint(.dsAccentLime)
+            if viewModel.isLoading {
+                AppLoadingView()
             } else {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
@@ -171,5 +170,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView(selectedTab: .constant(0), viewModel: HomeViewModel())
+    HomeView(selectedTab: .constant(0), viewModel: HomeViewModel(userID: UUID()))
 }

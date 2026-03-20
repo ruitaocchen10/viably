@@ -8,7 +8,7 @@ final class HomeViewModel: ObservableObject {
     @Published var completedHabitIDs: Set<UUID> = []
     @Published var todayScore: DailyScore? = nil
     @Published var profile: Profile? = nil
-    @Published var isLoading = false
+    @Published var isLoading = true
     @Published var errorMessage: String? = nil
 
     var scoreValue: Int { todayScore?.score ?? 0 }
@@ -42,11 +42,8 @@ final class HomeViewModel: ObservableObject {
 
     private let userID: UUID
 
-    init() {
-        guard let id = supabase.auth.currentUser?.id else {
-            preconditionFailure("ViewModel initialized without authenticated user")
-        }
-        self.userID = id
+    init(userID: UUID) {
+        self.userID = userID
     }
 
     func loadAll() async {

@@ -16,28 +16,23 @@ struct ProfileView: View {
         ScrollView {
             VStack(spacing: 0) {
                 header
-                if viewModel.isLoading {
-                    ProgressView()
-                        .tint(.dsTextPrimary)
-                        .padding(.top, 32)
-                } else {
-                    if let error = viewModel.errorMessage {
-                        Text(error)
-                            .font(.dsCaption)
-                            .foregroundColor(.red)
-                            .padding(.horizontal)
-                            .padding(.top, 12)
-                    }
-                    statsRow
-                        .padding(.horizontal, 16)
-                        .padding(.top, 24)
-                    signOutButton
-                        .padding(.horizontal, 16)
-                        .padding(.top, 32)
-                        .padding(.bottom, 24)
+                if let error = viewModel.errorMessage {
+                    Text(error)
+                        .font(.dsCaption)
+                        .foregroundColor(.red)
+                        .padding(.horizontal)
+                        .padding(.top, 12)
                 }
+                statsRow
+                    .padding(.horizontal, 16)
+                    .padding(.top, 24)
+                signOutButton
+                    .padding(.horizontal, 16)
+                    .padding(.top, 32)
+                    .padding(.bottom, 24)
             }
         }
+        .overlay { if viewModel.isLoading { AppLoadingView() } }
         .ignoresSafeArea(edges: .top)
         .background(Color.dsBackground.ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
