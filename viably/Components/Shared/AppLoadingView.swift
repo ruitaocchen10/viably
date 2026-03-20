@@ -14,9 +14,9 @@ struct AppLoadingView: View {
             Text("viablyy")
                 .font(.dsXBoldHeading)
                 .foregroundColor(.dsAccentLime)
-                .opacity(pulse ? 1.0 : 0.4)
+                .scaleEffect(pulse ? 1.1 : 0.9)
                 .onAppear {
-                    withAnimation(.easeInOut(duration: 0.2).repeatForever(autoreverses: true)) {
+                    withAnimation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true)) {
                         pulse = true
                     }
                 }
