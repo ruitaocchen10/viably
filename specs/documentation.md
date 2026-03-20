@@ -106,5 +106,3 @@ Debugging Profile Photos
 - Note: when a profile is updated, the view will only show that update when the information is reloaded. For example, on the HomeView profile information is only loaded when opening the app for the first time, so that will only change when you exit the app and come back... for now.
 
   3.18.2026
-
-Debugging Habits -

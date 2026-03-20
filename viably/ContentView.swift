@@ -43,6 +43,7 @@ struct ContentView: View {
             }
             .tag(3)
         }
+        .task { await homeVM.loadAll() }
         .tint(.dsAccentLime)
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
