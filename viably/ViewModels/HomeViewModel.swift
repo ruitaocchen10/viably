@@ -8,7 +8,7 @@ final class HomeViewModel: ObservableObject {
     @Published var completedHabitIDs: Set<UUID> = []
     @Published var todayScore: DailyScore? = nil
     @Published var profile: Profile? = nil
-    @Published var isLoading = false
+    @Published var isLoading = true
     @Published var errorMessage: String? = nil
 
     var scoreValue: Int { todayScore?.score ?? 0 }
@@ -47,7 +47,6 @@ final class HomeViewModel: ObservableObject {
     }
 
     func loadAll() async {
-        guard !isLoading else { return }
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
