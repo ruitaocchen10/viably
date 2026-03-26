@@ -10,6 +10,7 @@ struct ProfileView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @State private var showingEdit = false
     @State private var showingSignOutAlert = false
+    @State private var showingDeleteAccountAlert = false
     @State private var showingFriends = false
 
     var body: some View {
@@ -23,12 +24,25 @@ struct ProfileView: View {
                         .padding(.horizontal)
                         .padding(.top, 12)
                 }
+                if let error = authVM.errorMessage {
+                    Text(error)
+                        .font(.dsCaption)
+                        .foregroundColor(.red)
+                        .padding(.horizontal)
+                        .padding(.top, 4)
+                }
                 statsRow
                     .padding(.horizontal, 16)
                     .padding(.top, 24)
                 signOutButton
                     .padding(.horizontal, 16)
                     .padding(.top, 32)
+                deleteAccountButton
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                privacyPolicyButton
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
                     .padding(.bottom, 24)
             }
         }
@@ -109,6 +123,40 @@ struct ProfileView: View {
         } message: {
             Text("Are you sure you want to sign out?")
         }
+    }
+
+    // MARK: - Delete Account
+
+    private var deleteAccountButton: some View {
+        Button(role: .destructive) {
+            showingDeleteAccountAlert = true
+        } label: {
+            Text("Delete Account")
+                .font(.dsSemiBoldSectionLabel)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+        }
+        .buttonStyle(.bordered)
+        .tint(.red)
+        .alert("Delete Account", isPresented: $showingDeleteAccountAlert) {
+            Button("Delete Account", role: .destructive) { Task { await authVM.deleteAccount() } }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will permanently delete your account and all your data. This cannot be undone.")
+        }
+    }
+
+    // MARK: - Privacy Policy
+
+    private var privacyPolicyButton: some View {
+        Link(destination: URL(string: "https://www.notion.so/Privacy-Policy-for-viablyy-3233b0f9010e8099bf82cab56a3bdf87")!) {
+            Text("Privacy Policy")
+                .font(.dsSemiBoldSectionLabel)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+        }
+        .buttonStyle(.bordered)
+        .tint(.dsTextMuted)
     }
 
     // MARK: - Stats row

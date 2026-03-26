@@ -98,6 +98,18 @@ class AuthViewModel: ObservableObject {
         }
         isLoading = false
     }
+
+    func deleteAccount() async {
+        guard let userID = currentUserID else { return }
+        isLoading = true
+        errorMessage = nil
+        do {
+            try await AuthService.deleteAccount(userID: userID)
+        } catch {
+            errorMessage = error.localizedDescription
+            isLoading = false
+        }
+    }
 }
 
 private class AppleSignInHelper: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {

@@ -21,4 +21,11 @@ struct AuthService {
     static func signOut() async throws {
         try await supabase.auth.signOut()
     }
+
+    static func deleteAccount(userID: UUID) async throws {
+        // Best-effort avatar cleanup before deleting the user
+        try? await supabase.storage.from("avatars").remove(paths: ["\(userID)/avatar.jpg"])
+        try await supabase.rpc("delete_user").execute()
+        try await supabase.auth.signOut(scope: .local)
+    }
 }
