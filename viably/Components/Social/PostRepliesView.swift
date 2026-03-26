@@ -3,13 +3,16 @@ import SwiftUI
 struct PostRepliesView: View {
     let post: Post
     let onReplyAdded: () -> Void
+    let onBlockUser: (UUID) -> Void
 
     @StateObject private var viewModel: PostRepliesViewModel
     @FocusState private var isInputFocused: Bool
+    @State private var reportingReply: Reply? = nil
 
-    init(post: Post, onReplyAdded: @escaping () -> Void) {
+    init(post: Post, onReplyAdded: @escaping () -> Void, onBlockUser: @escaping (UUID) -> Void = { _ in }) {
         self.post = post
         self.onReplyAdded = onReplyAdded
+        self.onBlockUser = onBlockUser
         _viewModel = StateObject(wrappedValue: PostRepliesViewModel(postID: post.id, onReplyAdded: onReplyAdded))
     }
 
@@ -58,9 +61,16 @@ struct PostRepliesView: View {
                 ScrollViewReader { proxy in
                     List {
                         ForEach(viewModel.replies) { reply in
-                            ReplyRow(reply: reply, currentUserID: viewModel.userID) {
-                                Task { await viewModel.deleteReply(reply) }
-                            }
+                            ReplyRow(
+                                reply: reply,
+                                currentUserID: viewModel.userID,
+                                onDelete: { Task { await viewModel.deleteReply(reply) } },
+                                onReport: { reportingReply = reply },
+                                onBlock: {
+                                    Task { await viewModel.blockUser(reply.userID) }
+                                    onBlockUser(reply.userID)
+                                }
+                            )
                             .id(reply.id)
                             .listRowBackground(Color.clear)
                             .listRowInsets(EdgeInsets())
@@ -121,6 +131,9 @@ struct PostRepliesView: View {
         }
         .background(Color.dsBackground)
         .task { await viewModel.loadReplies() }
+        .sheet(item: $reportingReply) { reply in
+            ReportContentView(target: .reply(reply), reporterID: viewModel.userID)
+        }
     }
 }
 
@@ -130,6 +143,12 @@ private struct ReplyRow: View {
     let reply: Reply
     let currentUserID: UUID
     let onDelete: () -> Void
+    let onReport: () -> Void
+    let onBlock: () -> Void
+
+    @State private var showingBlockConfirm = false
+
+    private var posterName: String { reply.profile.map { "@\($0.username)" } ?? "this user" }
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
@@ -161,6 +180,24 @@ private struct ReplyRow: View {
                 }
                 .tint(.red)
             }
+        }
+        .contextMenu {
+            if reply.userID != currentUserID {
+                Button(role: .destructive, action: onReport) {
+                    Label("Report Reply", systemImage: "flag")
+                }
+                Button(role: .destructive) {
+                    showingBlockConfirm = true
+                } label: {
+                    Label("Block \(posterName)", systemImage: "hand.raised")
+                }
+            }
+        }
+        .alert("Block \(posterName)?", isPresented: $showingBlockConfirm) {
+            Button("Block", role: .destructive, action: onBlock)
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("You won't see their posts or replies. They won't be notified.")
         }
     }
 }

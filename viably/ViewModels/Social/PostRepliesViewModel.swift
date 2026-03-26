@@ -31,6 +31,8 @@ final class PostRepliesViewModel: ObservableObject {
             replies = []
             return
         }
+        let blocked = (try? await ModerationService.fetchBlockedUserIDs(for: userID)) ?? []
+        fetched = fetched.filter { !blocked.contains($0.userID) }
         let uniqueUserIDs = Array(Set(fetched.map { $0.userID }))
         let profiles: [Profile] = (try? await supabase
             .from("profiles")
@@ -81,6 +83,13 @@ final class PostRepliesViewModel: ObservableObject {
             replies.removeAll { $0.id == tempID }
             draftText = trimmed
         }
+    }
+
+    func blockUser(_ blockedID: UUID) async {
+        do {
+            try await ModerationService.blockUser(blockerID: userID, blockedID: blockedID)
+            replies.removeAll { $0.userID == blockedID }
+        } catch { }
     }
 
     func deleteReply(_ reply: Reply) async {

@@ -2,8 +2,16 @@ import SwiftUI
 
 struct FeedPostCard: View {
     let post: Post
+    let currentUserID: UUID
     let onHype: () -> Void
     let onReply: () -> Void
+    let onBlock: (UUID) -> Void
+
+    @State private var showingReport = false
+    @State private var showingBlockConfirm = false
+
+    private var isOwnPost: Bool { post.userID == currentUserID }
+    private var posterName: String { post.profile.map { "@\($0.username)" } ?? "this user" }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -105,6 +113,29 @@ struct FeedPostCard: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.dsBorder, lineWidth: 1)
         )
+        .contextMenu {
+            if !isOwnPost {
+                Button(role: .destructive) {
+                    showingReport = true
+                } label: {
+                    Label("Report Post", systemImage: "flag")
+                }
+                Button(role: .destructive) {
+                    showingBlockConfirm = true
+                } label: {
+                    Label("Block \(posterName)", systemImage: "hand.raised")
+                }
+            }
+        }
+        .sheet(isPresented: $showingReport) {
+            ReportContentView(target: .post(post), reporterID: currentUserID)
+        }
+        .alert("Block \(posterName)?", isPresented: $showingBlockConfirm) {
+            Button("Block", role: .destructive) { onBlock(post.userID) }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("You won't see their posts or replies. They won't be notified.")
+        }
     }
 }
 

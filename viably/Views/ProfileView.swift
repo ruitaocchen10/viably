@@ -43,6 +43,9 @@ struct ProfileView: View {
                 privacyPolicyButton
                     .padding(.horizontal, 16)
                     .padding(.top, 12)
+                contactSupportButton
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
                     .padding(.bottom, 24)
             }
         }
@@ -151,6 +154,19 @@ struct ProfileView: View {
     private var privacyPolicyButton: some View {
         Link(destination: URL(string: "https://www.notion.so/Privacy-Policy-for-viablyy-3233b0f9010e8099bf82cab56a3bdf87")!) {
             Text("Privacy Policy")
+                .font(.dsSemiBoldSectionLabel)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+        }
+        .buttonStyle(.bordered)
+        .tint(.dsTextMuted)
+    }
+
+    // MARK: - Contact Support
+
+    private var contactSupportButton: some View {
+        Link(destination: URL(string: "mailto:support@viably.app")!) {
+            Text("Contact Support")
                 .font(.dsSemiBoldSectionLabel)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 8)

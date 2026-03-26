@@ -8,7 +8,7 @@ final class SocialFeedViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    private let userID: UUID
+    let userID: UUID
 
     init() {
         guard let id = supabase.auth.currentUser?.id else {
@@ -22,7 +22,10 @@ final class SocialFeedViewModel: ObservableObject {
         errorMessage = nil
         defer { isLoading = false }
         do {
-            posts = try await PostService.fetchFeed(for: userID)
+            async let fetchedPosts = PostService.fetchFeed(for: userID)
+            async let blockedIDs = ModerationService.fetchBlockedUserIDs(for: userID)
+            let (allPosts, blocked) = try await (fetchedPosts, blockedIDs)
+            posts = allPosts.filter { !blocked.contains($0.userID) }
         } catch is CancellationError {
             // Task was cancelled by refreshable — not an error
         } catch let urlError as URLError where urlError.code == .cancelled {
@@ -39,6 +42,19 @@ final class SocialFeedViewModel: ObservableObject {
     func incrementReplyCount(for postID: UUID) {
         guard let idx = posts.firstIndex(where: { $0.id == postID }) else { return }
         posts[idx].replyCount += 1
+    }
+
+    func blockUser(_ blockedID: UUID) async {
+        do {
+            try await ModerationService.blockUser(blockerID: userID, blockedID: blockedID)
+            posts.removeAll { $0.userID == blockedID }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func removePostsFromUser(_ id: UUID) {
+        posts.removeAll { $0.userID == id }
     }
 
     func toggleHype(post: Post) async {

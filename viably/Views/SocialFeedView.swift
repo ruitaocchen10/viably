@@ -46,8 +46,10 @@ struct SocialFeedView: View {
                             ForEach(viewModel.posts) { post in
                                 FeedPostCard(
                                     post: post,
+                                    currentUserID: viewModel.userID,
                                     onHype: { Task { await viewModel.toggleHype(post: post) } },
-                                    onReply: { replyingToPost = post }
+                                    onReply: { replyingToPost = post },
+                                    onBlock: { blockedID in Task { await viewModel.blockUser(blockedID) } }
                                 )
                                 .padding(.horizontal, 16)
                                 .padding(.bottom, 12)
@@ -76,9 +78,11 @@ struct SocialFeedView: View {
             FriendManagementView()
         }
         .sheet(item: $replyingToPost) { post in
-            PostRepliesView(post: post) {
+            PostRepliesView(post: post, onReplyAdded: {
                 viewModel.incrementReplyCount(for: post.id)
-            }
+            }, onBlockUser: { blockedID in
+                viewModel.removePostsFromUser(blockedID)
+            })
         }
     }
 
